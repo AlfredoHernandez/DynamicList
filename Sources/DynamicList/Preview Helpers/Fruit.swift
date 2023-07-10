@@ -5,6 +5,7 @@
 #if DEBUG
 
 import Combine
+import Foundation
 import SwiftUI
 
 enum FruitColor {
@@ -37,6 +38,7 @@ let filters: [Topic] = [
     Topic(name: "Yellow", predicate: { (item: Fruit) in item.color == .yellow }),
     Topic(name: "Red", predicate: { (item: Fruit) in item.color == .red }),
     Topic(name: "No Items", predicate: { _ in false }),
+    Topic(name: "Error", predicate: { _ in throw NSError(domain: "test", code: 1) }),
 ]
 
 func randomItemsGenerator() -> [Fruit] {

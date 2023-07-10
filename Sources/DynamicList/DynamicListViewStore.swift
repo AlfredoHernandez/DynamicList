@@ -10,6 +10,7 @@ public class DynamicListViewStore<Item>: ObservableObject {
     @Published var items: [Item]
     @Published var topicSelected: String = ""
     @Published public private(set) var isLoading = false
+    var error: Error?
     private let loader: () -> AnyPublisher<[Item], Error>
     private var cancellables = Set<AnyCancellable>()
 
@@ -34,6 +35,7 @@ public class DynamicListViewStore<Item>: ObservableObject {
 
     public func loadItems() {
         isLoading = true
+        error = nil
         loader()
             .handleEvents(receiveRequest: { [weak self] _ in
                 self?.displayingLoadingItems()
@@ -41,8 +43,10 @@ public class DynamicListViewStore<Item>: ObservableObject {
             .tryMap(filteringItems)
             .sink { completion in
                 switch completion {
-                case .failure:
-                    break
+                case let .failure(error):
+                    self.items = []
+                    self.isLoading = false
+                    self.error = error
                 case .finished:
                     break
                 }
