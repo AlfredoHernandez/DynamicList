@@ -7,20 +7,32 @@ import SwiftUI
 
 public struct DynamicListView<Item: Identifiable>: View {
     @ObservedObject public var store: DynamicListViewStore<Item>
-    public let itemFeedView: (Item) -> AnyView
-    public let title: String
 
-    public init(store: DynamicListViewStore<Item>, itemFeedView: @escaping (Item) -> AnyView, title: String) {
+    public let title: String
+    public let itemFeedView: (Item) -> any View
+    public let detailItemView: (Item) -> any View
+
+    public init(
+        title: String,
+        store: DynamicListViewStore<Item>,
+        itemFeedView: @escaping (Item) -> any View,
+        detailItemView: @escaping (Item) -> any View
+    ) {
+        self.title = title
         self.store = store
         self.itemFeedView = itemFeedView
-        self.title = title
+        self.detailItemView = detailItemView
     }
 
     public var body: some View {
         NavigationView {
             VStack {
                 List(store.items, id: \.id) { item in
-                    itemFeedView(item)
+                    NavigationLink {
+                        AnyView(detailItemView(item))
+                    } label: {
+                        AnyView(itemFeedView(item))
+                    }
                 }
                 .redacted(reason: store.isLoading ? .placeholder : [])
                 .listStyle(.plain)
@@ -40,7 +52,7 @@ public struct DynamicListView<Item: Identifiable>: View {
             loadItems()
         })
     }
-    
+
     private func loadItems() {
         withAnimation {
             store.loadItems()
@@ -51,15 +63,14 @@ public struct DynamicListView<Item: Identifiable>: View {
 struct FeedView_Previews: PreviewProvider {
     static var previews: some View {
         DynamicListView<Fruit>(
+            title: "My fruit list",
             store: DynamicListViewStore<Fruit>(
                 topics: filters,
                 generateRandomItemsForLoading: randomItemsGenerator,
                 loader: { fruitsLoader }
             ),
-            itemFeedView: { fruit in
-                AnyView(FruitItemView(item: fruit))
-            },
-            title: "My fruit list"
+            itemFeedView: FruitItemView.init,
+            detailItemView: DetailFruitItemView.init
         )
     }
 }
