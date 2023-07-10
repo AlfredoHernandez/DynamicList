@@ -5,12 +5,12 @@
 import Combine
 import SwiftUI
 
-public struct FeedView<Item: Identifiable>: View {
-    @ObservedObject public var store: FeedViewStore<Item>
+public struct DynamicListView<Item: Identifiable>: View {
+    @ObservedObject public var store: DynamicListViewStore<Item>
     public let itemFeedView: (Item) -> AnyView
     public let title: String
 
-    public init(store: FeedViewStore<Item>, itemFeedView: @escaping (Item) -> AnyView, title: String) {
+    public init(store: DynamicListViewStore<Item>, itemFeedView: @escaping (Item) -> AnyView, title: String) {
         self.store = store
         self.itemFeedView = itemFeedView
         self.title = title
@@ -50,8 +50,8 @@ public struct FeedView<Item: Identifiable>: View {
 
 struct FeedView_Previews: PreviewProvider {
     static var previews: some View {
-        FeedView<Fruit>(
-            store: FeedViewStore<Fruit>(
+        DynamicListView<Fruit>(
+            store: DynamicListViewStore<Fruit>(
                 topics: filters,
                 generateRandomItemsForLoading: randomItemsGenerator,
                 loader: { fruitsLoader }
@@ -59,7 +59,7 @@ struct FeedView_Previews: PreviewProvider {
             itemFeedView: { fruit in
                 AnyView(FruitItemView(item: fruit))
             },
-            title: "News Feed"
+            title: "My fruit list"
         )
     }
 }

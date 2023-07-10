@@ -5,6 +5,6 @@
 @testable import DynamicList
 import XCTest
 
-final class NewsTests: XCTestCase {
+final class DynamicListTests: XCTestCase {
     func test_foo() throws {}
 }

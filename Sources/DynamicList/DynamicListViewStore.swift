@@ -6,7 +6,7 @@ import Combine
 import Foundation
 import SwiftUI
 
-public class FeedViewStore<Item>: ObservableObject {
+public class DynamicListViewStore<Item>: ObservableObject {
     @Published var items: [Item]
     @Published var topicSelected: String = ""
     @Published public private(set) var isLoading = false
