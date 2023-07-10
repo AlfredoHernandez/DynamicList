@@ -36,14 +36,9 @@ public class FeedViewStore<Item>: ObservableObject {
         isLoading = true
         loader()
             .handleEvents(receiveRequest: { [weak self] _ in
-                guard let self, let randomItemsGenerator = generateRandomItemsForLoading else { return }
-                if items.count == 0 { items = randomItemsGenerator() }
+                self?.displayingLoadingItems()
             })
-            .tryMap { items in
-                let index = self.topics.firstIndex(where: { $0.name == self.topicSelected }) ?? 0
-                let predicate = self.topics[index].predicate
-                return try items.filter(predicate)
-            }
+            .tryMap(filteringItems)
             .sink { completion in
                 switch completion {
                 case .failure:
@@ -52,11 +47,22 @@ public class FeedViewStore<Item>: ObservableObject {
                     break
                 }
             } receiveValue: { [weak self] feed in
-                withAnimation {
-                    self?.items = feed
+                self?.items = feed
+                withAnimation(.default) {
                     self?.isLoading = false
                 }
             }
             .store(in: &cancellables)
+    }
+
+    private func displayingLoadingItems() {
+        guard let randomItemsGenerator = generateRandomItemsForLoading else { return }
+        if items.count == 0 { items = randomItemsGenerator() }
+    }
+
+    private func filteringItems(_ items: [Item]) throws -> [Item] {
+        let index = topics.firstIndex(where: { $0.name == self.topicSelected }) ?? 0
+        let predicate = topics[index].predicate
+        return try items.filter(predicate)
     }
 }

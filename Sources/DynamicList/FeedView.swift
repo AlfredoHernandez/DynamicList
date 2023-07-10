@@ -27,7 +27,7 @@ public struct FeedView<Item: Identifiable>: View {
             }
             .navigationTitle(title)
             .toolbar(content: {
-                ToolbarItem(placement: .principal) {
+                ToolbarItem(placement: .bottomBar) {
                     TopicSegmentedView(
                         topicSelected: $store.topicSelected,
                         topics: store.topics.map(\.name)
@@ -35,10 +35,16 @@ public struct FeedView<Item: Identifiable>: View {
                 }
             })
         }
-        .onAppear(perform: store.loadItems)
+        .onAppear(perform: loadItems)
         .onChange(of: store.topicSelected, perform: { _ in
-            store.loadItems()
+            loadItems()
         })
+    }
+    
+    private func loadItems() {
+        withAnimation {
+            store.loadItems()
+        }
     }
 }
 
