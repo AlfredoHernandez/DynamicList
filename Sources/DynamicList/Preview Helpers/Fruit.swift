@@ -2,10 +2,11 @@
 //  Copyright © 2023 Jesús Alfredo Hernández Alarcón. All rights reserved.
 //
 
+#if DEBUG
+
 import Combine
 import SwiftUI
 
-#if DEBUG
 enum FruitColor {
     case red
     case yellow
@@ -35,6 +36,7 @@ let filters: [Topic] = [
     Topic(name: "All", predicate: { _ in true }),
     Topic(name: "Yellow", predicate: { (item: Fruit) in item.color == .yellow }),
     Topic(name: "Red", predicate: { (item: Fruit) in item.color == .red }),
+    Topic(name: "No Items", predicate: { _ in false }),
 ]
 
 func randomItemsGenerator() -> [Fruit] {

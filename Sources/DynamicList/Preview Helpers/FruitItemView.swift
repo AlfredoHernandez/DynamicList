@@ -2,22 +2,26 @@
 //  Copyright © 2023 Jesús Alfredo Hernández Alarcón. All rights reserved.
 //
 
-import SwiftUI
-
 #if DEBUG
+
+import SwiftUI
 
 struct FruitItemView: View {
     let item: Fruit
 
     var body: some View {
         HStack {
-            Text(item.name)
-                .font(.title3)
-                .fontWeight(.semibold)
-                .foregroundColor(.blue)
-            Spacer()
+            VStack(alignment: .leading, spacing: 8) {
+                Text(item.name)
+                    .bold()
+                    .font(.title3)
+                    .foregroundColor(.black)
+                Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit")
+                    .font(.callout)
+                    .foregroundColor(.secondary)
+            }
             Text(item.symbol)
-        }
+        }.frame(maxWidth: .infinity)
     }
 }
 

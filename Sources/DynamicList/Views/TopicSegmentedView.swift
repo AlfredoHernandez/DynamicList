@@ -7,7 +7,7 @@ import SwiftUI
 struct TopicSegmentedView: View {
     @Binding var topicSelected: String
     let topics: [String]?
-    
+
     var body: some View {
         if let topics, !topics.isEmpty {
             Picker("Topics", selection: $topicSelected) {

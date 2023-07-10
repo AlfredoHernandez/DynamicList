@@ -57,7 +57,7 @@ public class DynamicListViewStore<Item>: ObservableObject {
 
     private func displayingLoadingItems() {
         guard let randomItemsGenerator = generateRandomItemsForLoading else { return }
-        if items.count == 0 { items = randomItemsGenerator() }
+        items = randomItemsGenerator()
     }
 
     private func filteringItems(_ items: [Item]) throws -> [Item] {

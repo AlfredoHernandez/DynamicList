@@ -3,6 +3,7 @@
 //
 
 #if DEBUG
+
 import SwiftUI
 
 struct DetailFruitItemView: View {

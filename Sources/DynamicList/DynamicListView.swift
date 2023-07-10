@@ -11,17 +11,20 @@ public struct DynamicListView<Item: Identifiable>: View {
     public let title: String
     public let itemFeedView: (Item) -> any View
     public let detailItemView: (Item) -> any View
+    public let noItemsView: () -> any View
 
     public init(
         title: String,
         store: DynamicListViewStore<Item>,
         itemFeedView: @escaping (Item) -> any View,
-        detailItemView: @escaping (Item) -> any View
+        detailItemView: @escaping (Item) -> any View,
+        noItemsView: @escaping () -> any View
     ) {
-        self.title = title
+        self.title = title 
         self.store = store
         self.itemFeedView = itemFeedView
         self.detailItemView = detailItemView
+        self.noItemsView = noItemsView
     }
 
     public var body: some View {
@@ -34,6 +37,13 @@ public struct DynamicListView<Item: Identifiable>: View {
                         AnyView(itemFeedView(item))
                     }
                 }
+                .overlay(Group {
+                    if store.items.isEmpty {
+                        withAnimation(.easeIn) {
+                            AnyView(noItemsView())
+                        }
+                    }
+                })
                 .redacted(reason: store.isLoading ? .placeholder : [])
                 .listStyle(.plain)
             }
@@ -70,7 +80,10 @@ struct FeedView_Previews: PreviewProvider {
                 loader: { fruitsLoader }
             ),
             itemFeedView: FruitItemView.init,
-            detailItemView: DetailFruitItemView.init
+            detailItemView: DetailFruitItemView.init,
+            noItemsView: {
+                NoItemsView(icon: "newspaper")
+            }
         )
     }
 }
