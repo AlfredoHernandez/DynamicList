@@ -6,10 +6,10 @@ import SwiftUI
 
 struct TopicSegmentedView: View {
     @Binding var topicSelected: String
-    let topics: [String]
-
+    let topics: [String]?
+    
     var body: some View {
-        if !topics.isEmpty {
+        if let topics, !topics.isEmpty {
             Picker("Topics", selection: $topicSelected) {
                 ForEach(topics, id: \.self) { topic in
                     Text(topic)
