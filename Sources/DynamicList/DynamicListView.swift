@@ -40,21 +40,22 @@ public struct DynamicListView<Item: Identifiable>: View {
                         AnyView(itemFeedView(item))
                     }
                 }
+                .redacted(reason: store.isLoading ? .placeholder : [])
+                .searchableEnabled(text: $store.query, prompt: Text("Search"), display: store.searchingByQuery != nil)
+                .onChange(of: store.query, perform: { _ in
+                    store.loadItems()
+                })
                 .overlay(Group {
                     if store.items.isEmpty, store.error == nil {
                         withAnimation(.easeIn) {
                             AnyView(noItemsView())
                         }
-                    }
-                })
-                .overlay(Group {
-                    if let _ = store.error {
+                    } else if let _ = store.error {
                         withAnimation {
                             AnyView(errorView())
                         }
                     }
                 })
-                .redacted(reason: store.isLoading ? .placeholder : [])
                 .listStyle(.plain)
             }
             .navigationTitle(title)
@@ -86,6 +87,9 @@ struct FeedView_Previews: PreviewProvider {
             title: "My fruit list",
             store: DynamicListViewStore<Fruit>(
                 topics: filters,
+                searchingByQuery: { query, fruit in
+                    query == "" ? true : fruit.name.range(of: query, options: [.diacriticInsensitive, .caseInsensitive]) != nil
+                },
                 generateRandomItemsForLoading: randomItemsGenerator,
                 loader: { fruitsLoader }
             ),
@@ -94,7 +98,7 @@ struct FeedView_Previews: PreviewProvider {
             noItemsView: {
                 NoItemsView(icon: "newspaper")
             }, errorView: {
-                LoadingErrorView(icon: "network.slash")
+                LoadingErrorView(icon: "x.circle")
             }
         )
     }

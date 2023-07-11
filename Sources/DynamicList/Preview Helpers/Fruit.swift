@@ -42,23 +42,12 @@ let filters: [Topic] = [
 ]
 
 func randomItemsGenerator() -> [Fruit] {
-    [
-        Fruit(name: "Sandía", symbol: "🍉", color: .red),
-        Fruit(name: "Sandía", symbol: "🍉", color: .red),
-        Fruit(name: "Sandía", symbol: "🍉", color: .red),
-        Fruit(name: "Sandía", symbol: "🍉", color: .red),
-        Fruit(name: "Sandía", symbol: "🍉", color: .red),
-        Fruit(name: "Sandía", symbol: "🍉", color: .red),
-        Fruit(name: "Sandía", symbol: "🍉", color: .red),
-        Fruit(name: "Sandía", symbol: "🍉", color: .red),
-        Fruit(name: "Sandía", symbol: "🍉", color: .red),
-        Fruit(name: "Sandía", symbol: "🍉", color: .red),
-        Fruit(name: "Sandía", symbol: "🍉", color: .red),
-        Fruit(name: "Sandía", symbol: "🍉", color: .red),
-        Fruit(name: "Sandía", symbol: "🍉", color: .red),
-        Fruit(name: "Sandía", symbol: "🍉", color: .red),
-        Fruit(name: "Sandía", symbol: "🍉", color: .red),
-    ]
+    var fruits: [Fruit] = []
+    for _ in 1 ... 20 {
+        let fruit = Fruit(name: "Sandía", symbol: "🍉", color: .red)
+        fruits.append(fruit)
+    }
+    return fruits
 }
 
 #endif

@@ -10,21 +10,26 @@ public class DynamicListViewStore<Item>: ObservableObject {
     @Published var items: [Item]
     @Published var topicSelected: String = ""
     @Published public private(set) var isLoading = false
+    @Published var query: String = ""
+
     var error: Error?
     private let loader: () -> AnyPublisher<[Item], Error>
     private var cancellables = Set<AnyCancellable>()
 
     public let topics: [Topic<Item>]
+    public let searchingByQuery: ((String, Item) -> Bool)?
     public let generateRandomItemsForLoading: (() -> [Item])?
 
     public init(
         items: [Item] = [],
         topics: [Topic<Item>] = [],
-        generateRandomItemsForLoading: (() -> [Item])?,
+        searchingByQuery: ((String, Item) -> Bool)? = nil,
+        generateRandomItemsForLoading: (() -> [Item])? = nil,
         loader: @escaping () -> AnyPublisher<[Item], Error>
     ) {
         self.items = items
         self.topics = topics
+        self.searchingByQuery = searchingByQuery
         self.generateRandomItemsForLoading = generateRandomItemsForLoading
         self.loader = loader
 
@@ -41,6 +46,10 @@ public class DynamicListViewStore<Item>: ObservableObject {
                 self?.displayingLoadingItems()
             })
             .tryMap(filteringItems)
+            .tryMap { [weak self] items in
+                guard let self, let searchingByQuery else { return items }
+                return items.filter { item in searchingByQuery(self.query, item) }
+            }
             .sink { completion in
                 switch completion {
                 case let .failure(error):
