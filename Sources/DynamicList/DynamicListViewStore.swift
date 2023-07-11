@@ -64,14 +64,11 @@ class DynamicListViewStore<Item>: ObservableObject {
                 return items.filter { item in searchingByQuery(self.query, item) }
             }
             .sink { completion in
-                switch completion {
-                case let .failure(error):
+                if case let .failure(error) = completion {
                     self.items = []
                     self.isLoading = false
                     self.error = error
                     didFinishLoadingItems()
-                case .finished:
-                    break
                 }
             } receiveValue: { [weak self] feed in
                 self?.items = feed
