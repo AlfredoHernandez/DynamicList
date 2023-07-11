@@ -2,7 +2,7 @@
 
 TODO: 
 - [ ] Localize strings
-- [ ] Add unit tests
+- [X] Add unit tests
 - [X] Add search bar to search items
 - [X] Display detail view
 - [X] Reload list

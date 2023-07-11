@@ -106,8 +106,38 @@ final class DynamicListViewStoreTests: XCTestCase {
 
         XCTAssertEqual(sut.items, ["abcd", "dcba", "abba"])
     }
-}
 
-func anyNSError() -> NSError {
-    NSError(domain: "test", code: 1)
+    func test_searchByQuery_returnsItemsSearchingByQuery() async {
+        let items = ["home", "office", "test", "todo", "fix"]
+        let loader = LoaderSpy<String>()
+        let sut = DynamicListViewStore<String>(
+            searchingByQuery: { query, item in
+                query == "" ? true : item.range(of: query, options: [.diacriticInsensitive, .caseInsensitive]) != nil
+            },
+            loader: loader.publisher
+        )
+
+        sut.query = "o"
+        await sut.loadItemsAsync {
+            loader.complete(with: items, at: 0)
+        }
+
+        XCTAssertEqual(sut.items, ["home", "office", "todo"])
+    }
+
+    func test_searchByQuery_returnsAllItemsIfDisabled() async {
+        let items = ["home", "office", "test", "todo", "fix"]
+        let loader = LoaderSpy<String>()
+        let sut = DynamicListViewStore<String>(
+            searchingByQuery: nil,
+            loader: loader.publisher
+        )
+
+        sut.query = "any query"
+        await sut.loadItemsAsync {
+            loader.complete(with: items, at: 0)
+        }
+
+        XCTAssertEqual(sut.items, items)
+    }
 }
