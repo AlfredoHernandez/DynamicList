@@ -6,7 +6,7 @@ import Combine
 import Foundation
 import SwiftUI
 
-public class DynamicListViewStore<Item>: ObservableObject {
+class DynamicListViewStore<Item>: ObservableObject {
     @Published var items: [Item]
     @Published var topicSelected: String = ""
     @Published public private(set) var isLoading = false
@@ -20,7 +20,7 @@ public class DynamicListViewStore<Item>: ObservableObject {
     public let searchingByQuery: ((String, Item) -> Bool)?
     public let generateRandomItemsForLoading: (() -> [Item])?
 
-    public init(
+    init(
         items: [Item] = [],
         topics: [Topic<Item>] = [],
         searchingByQuery: ((String, Item) -> Bool)? = nil,
@@ -38,7 +38,7 @@ public class DynamicListViewStore<Item>: ObservableObject {
         }
     }
 
-    public func loadItems() {
+    func loadItems() {
         isLoading = true
         error = nil
         loader()
