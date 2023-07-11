@@ -8,24 +8,21 @@ import SwiftUI
 public struct DynamicListView<Item: Identifiable>: View {
     @ObservedObject var store: DynamicListViewStore<Item>
 
-    public let title: String
-    public let itemFeedView: (Item) -> any View
-    public let detailItemView: ((Item) -> any View)?
-    public let noItemsView: () -> any View
-    public let errorView: () -> any View
+    let title: String
+    let listItemView: (Item) -> ListItemView<Item>
+    let noItemsView: () -> any View
+    let errorView: () -> any View
 
     init(
         title: String,
+        listItemView: @escaping (Item) -> ListItemView<Item>,
         store: DynamicListViewStore<Item>,
-        itemFeedView: @escaping (Item) -> any View,
-        detailItemView: ((Item) -> any View)?,
         noItemsView: @escaping () -> any View,
         errorView: @escaping () -> any View
     ) {
         self.title = title
+        self.listItemView = listItemView
         self.store = store
-        self.itemFeedView = itemFeedView
-        self.detailItemView = detailItemView
         self.noItemsView = noItemsView
         self.errorView = errorView
     }
@@ -34,7 +31,7 @@ public struct DynamicListView<Item: Identifiable>: View {
         NavigationView {
             VStack {
                 List(store.items, id: \.id) {
-                    ListItemView($0)
+                    listItemView($0)
                 }
                 .redacted(reason: store.isLoading ? .placeholder : [])
                 .searchableEnabled(text: $store.query, prompt: Text("Search"), display: store.searchingByQuery != nil)
@@ -73,19 +70,6 @@ public struct DynamicListView<Item: Identifiable>: View {
     private func loadItems() {
         withAnimation {
             store.loadItems()
-        }
-    }
-
-    @ViewBuilder
-    private func ListItemView(_ item: Item) -> some View {
-        if let detailItemView {
-            NavigationLink {
-                AnyView(detailItemView(item))
-            } label: {
-                AnyView(itemFeedView(item))
-            }
-        } else {
-            AnyView(itemFeedView(item))
         }
     }
 }
