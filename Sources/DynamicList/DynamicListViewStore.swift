@@ -38,7 +38,19 @@ class DynamicListViewStore<Item>: ObservableObject {
         }
     }
 
-    func loadItems() {
+    func loadItemsAsync() async {
+        var finished = false
+        await withCheckedContinuation { continuation in
+            loadItems {
+                if !finished {
+                    finished = true
+                    continuation.resume()
+                }
+            }
+        }
+    }
+
+    private func loadItems(didFinishLoadingItems: @escaping () -> Void) {
         isLoading = true
         error = nil
         loader()
@@ -56,6 +68,7 @@ class DynamicListViewStore<Item>: ObservableObject {
                     self.items = []
                     self.isLoading = false
                     self.error = error
+                    didFinishLoadingItems()
                 case .finished:
                     break
                 }
@@ -64,6 +77,7 @@ class DynamicListViewStore<Item>: ObservableObject {
                 withAnimation(.default) {
                     self?.isLoading = false
                 }
+                didFinishLoadingItems()
             }
             .store(in: &cancellables)
     }

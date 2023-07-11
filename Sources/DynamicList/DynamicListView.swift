@@ -33,10 +33,13 @@ public struct DynamicListView<Item: Identifiable>: View {
                 List(store.items, id: \.id) {
                     listItemView($0)
                 }
+                .refreshableIfAvailable {
+                    await store.loadItemsAsync()
+                }
                 .redacted(reason: store.isLoading ? .placeholder : [])
                 .searchableEnabled(text: $store.query, prompt: Text("Search"), display: store.searchingByQuery != nil)
                 .onChange(of: store.query, perform: { _ in
-                    store.loadItems()
+                    loadItems()
                 })
                 .overlay(Group {
                     if store.items.isEmpty, store.error == nil {
@@ -53,7 +56,7 @@ public struct DynamicListView<Item: Identifiable>: View {
             }
             .navigationTitle(title)
             .toolbar(content: {
-                ToolbarItem(placement: .bottomBar) {
+                ToolbarItem(placement: .navigation) {
                     TopicSegmentedView(
                         topicSelected: $store.topicSelected,
                         topics: store.topics.map(\.name)
@@ -68,8 +71,8 @@ public struct DynamicListView<Item: Identifiable>: View {
     }
 
     private func loadItems() {
-        withAnimation {
-            store.loadItems()
+        Task {
+            await store.loadItemsAsync()
         }
     }
 }
@@ -78,7 +81,7 @@ struct DynamicListView_Previews: PreviewProvider {
     static var previews: some View {
         DynamicListViewComposer.compose(
             title: "My fruit list",
-            loader: { fruitsLoader },
+            loader: fruitsLoader.delay(for: .seconds(0.6), scheduler: DispatchQueue.main).eraseToAnyPublisher,
             topics: filters,
             searchingByQuery: { query, fruit in
                 query == "" ? true : fruit.name.range(of: query, options: [.diacriticInsensitive, .caseInsensitive]) != nil
@@ -91,6 +94,8 @@ struct DynamicListView_Previews: PreviewProvider {
             }, errorView: {
                 LoadingErrorView(icon: "x.circle")
             }
-        )
+        ).onAppear {
+            addMoreItemsForTesting()
+        }
     }
 }

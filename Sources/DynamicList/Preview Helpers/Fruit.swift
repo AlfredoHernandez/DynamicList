@@ -13,6 +13,7 @@ enum FruitColor {
     case yellow
     case green
     case orange
+    case purple
 }
 
 struct Fruit: Identifiable {
@@ -22,20 +23,42 @@ struct Fruit: Identifiable {
     let color: FruitColor
 }
 
-let fruitsLoader = Just<[Fruit]>([
+let fruitsLoader = CurrentValueSubject<[Fruit], Error>([
     Fruit(name: "Sandía", symbol: "🍉", color: .red),
     Fruit(name: "Pera", symbol: "🍐", color: .green),
     Fruit(name: "Manzana", symbol: "🍎", color: .red),
     Fruit(name: "Naranja", symbol: "🍊", color: .orange),
     Fruit(name: "Plátano", symbol: "🍌", color: .yellow),
 ])
-.delay(for: .seconds(0.6), scheduler: DispatchQueue.main)
-.setFailureType(to: Error.self)
-.eraseToAnyPublisher()
+
+func addMoreItemsForTesting() {
+    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+        fruitsLoader.send([
+            Fruit(name: "Sandía", symbol: "🍉", color: .red),
+            Fruit(name: "Pera", symbol: "🍐", color: .green),
+            Fruit(name: "Manzana Roja", symbol: "🍎", color: .red),
+            Fruit(name: "Naranja", symbol: "🍊", color: .orange),
+            Fruit(name: "Plátano", symbol: "🍌", color: .yellow),
+            Fruit(name: "Uva", symbol: "🍇", color: .purple),
+            Fruit(name: "Manzana Verde", symbol: "🍏", color: .green),
+        ])
+    }
+
+    DispatchQueue.main.asyncAfter(deadline: .now() + 6) {
+        fruitsLoader.send([
+            Fruit(name: "Pera", symbol: "🍐", color: .green),
+            Fruit(name: "Manzana Roja", symbol: "🍎", color: .red),
+            Fruit(name: "Manzana Verde", symbol: "🍏", color: .green),
+            Fruit(name: "Sandía", symbol: "🍉", color: .red),
+            Fruit(name: "Naranja", symbol: "🍊", color: .orange),
+            Fruit(name: "Durazno", symbol: "🍑", color: .orange),
+        ])
+    }
+}
 
 let filters: [Topic] = [
     Topic(name: "All", predicate: { _ in true }),
-    Topic(name: "Yellow", predicate: { (item: Fruit) in item.color == .yellow }),
+    Topic(name: "Orange", predicate: { (item: Fruit) in item.color == .orange }),
     Topic(name: "Red", predicate: { (item: Fruit) in item.color == .red }),
     Topic(name: "No Items", predicate: { _ in false }),
     Topic(name: "Error", predicate: { _ in throw NSError(domain: "test", code: 1) }),
