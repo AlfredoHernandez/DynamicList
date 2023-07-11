@@ -1,0 +1,32 @@
+{
+  "configurations" : [
+    {
+      "id" : "540F1263-B18F-4ED3-A376-C7C7A14BF6A7",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : {
+      "targets" : [
+        {
+          "containerPath" : "container:",
+          "identifier" : "DynamicList",
+          "name" : "DynamicList"
+        }
+      ]
+    }
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "DynamicListTests",
+        "name" : "DynamicListTests"
+      }
+    }
+  ],
+  "version" : 1
+}

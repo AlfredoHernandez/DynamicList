@@ -38,7 +38,7 @@ class DynamicListViewStore<Item>: ObservableObject {
         }
     }
 
-    func loadItemsAsync() async {
+    func loadItemsAsync(_ action: (() -> Void)? = nil) async {
         var finished = false
         await withCheckedContinuation { continuation in
             loadItems {
@@ -47,6 +47,7 @@ class DynamicListViewStore<Item>: ObservableObject {
                     continuation.resume()
                 }
             }
+            action?()
         }
     }
 
