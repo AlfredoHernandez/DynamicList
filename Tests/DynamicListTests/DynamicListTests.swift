@@ -43,20 +43,20 @@ final class DynamicListViewStoreTests: XCTestCase {
         XCTAssertEqual(sut.items, ["a", "b", "c"])
         XCTAssertNil(sut.error)
     }
-    
+
     func test_doesNotDisplayLoadingItems_ifDisabled() async {
         let loader = LoaderSpy<String>()
         let sut = DynamicListViewStore<String>(
             generateRandomItemsForLoading: nil,
             loader: loader.publisher
         )
-        
+
         await sut.loadItemsAsync {
             XCTAssertEqual(sut.items.count, 0)
             loader.complete(with: anyNSError(), at: 0)
         }
     }
-    
+
     func test_displayingLoadingItems_ifEnabled() async {
         let randomItems = ["any", "random", "items"]
         let loader = LoaderSpy<String>()
@@ -64,11 +64,47 @@ final class DynamicListViewStoreTests: XCTestCase {
             generateRandomItemsForLoading: { randomItems },
             loader: loader.publisher
         )
-        
+
         await sut.loadItemsAsync {
             XCTAssertEqual(sut.items.count, randomItems.count)
             loader.complete(with: anyNSError(), at: 0)
         }
+    }
+
+    func test_doesNotFilterItemsByTopic_whenTopicsAreEmpty() async {
+        let items = ["any", "random", "items"]
+        let loader = LoaderSpy<String>()
+        let sut = DynamicListViewStore<String>(
+            topics: [],
+            loader: loader.publisher
+        )
+
+        await sut.loadItemsAsync {
+            loader.complete(with: items, at: 0)
+        }
+
+        XCTAssertEqual(sut.items, items)
+    }
+
+    func test_filtersItemsByTopic_whenTopicsAreNotEmpty() async {
+        let topicSelectedName = "Filter by size of 4"
+        let items = ["abcd", "dcba", "ab", "abba", "bb"]
+        let loader = LoaderSpy<String>()
+        let sut = DynamicListViewStore<String>(
+            topics: [
+                Topic(name: topicSelectedName, predicate: { item in
+                    item.count == 4
+                }),
+            ],
+            loader: loader.publisher
+        )
+
+        sut.topicSelected = topicSelectedName
+        await sut.loadItemsAsync {
+            loader.complete(with: items, at: 0)
+        }
+
+        XCTAssertEqual(sut.items, ["abcd", "dcba", "abba"])
     }
 }
 

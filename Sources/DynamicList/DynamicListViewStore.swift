@@ -86,8 +86,9 @@ class DynamicListViewStore<Item>: ObservableObject {
     }
 
     private func filteringItems(_ items: [Item]) throws -> [Item] {
-        guard topics.count > 0 else { return items }
-        let index = topics.firstIndex(where: { $0.name == self.topicSelected }) ?? 0
+        guard topics.count > 0, let index = topics.firstIndex(where: { $0.name == self.topicSelected }) else {
+            return items
+        }
         let predicate = topics[index].predicate
         return try items.filter(predicate)
     }
