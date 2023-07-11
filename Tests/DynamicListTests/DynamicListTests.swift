@@ -25,27 +25,21 @@ final class DynamicListViewStoreTests: XCTestCase {
 
         XCTAssertFalse(sut.isLoading)
     }
-    
-    func test_loadItemsAsync_displaysErrorOnFailureLoading() async {
+
+    func test_loadItemsAsync_displaysCorrectIndicatorsOnLoadingCompletions() async {
         let loader = LoaderSpy<String>()
         let sut = DynamicListViewStore<String>(loader: loader.publisher)
 
         await sut.loadItemsAsync {
             XCTAssertNil(sut.error)
-            loader.complete(with: anyNSError())
+            loader.complete(with: anyNSError(), at: 0)
         }
-
         XCTAssertEqual(sut.error! as NSError, anyNSError())
-    }
-    
-    func test_loadItemsAsync_displaysItemsOnSuccessLoading() async {
-        let loader = LoaderSpy<String>()
-        let sut = DynamicListViewStore<String>(loader: loader.publisher)
 
         await sut.loadItemsAsync {
-            loader.complete(with: ["a", "b", "c"])
+            XCTAssertNil(sut.error)
+            loader.complete(with: ["a", "b", "c"], at: 1)
         }
-
         XCTAssertEqual(sut.items, ["a", "b", "c"])
         XCTAssertNil(sut.error)
     }
