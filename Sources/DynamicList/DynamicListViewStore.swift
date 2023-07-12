@@ -38,7 +38,7 @@ class DynamicListViewStore<Item>: ObservableObject {
         }
     }
 
-    func loadItemsAsync() async {
+    func loadItemsAsync(_ action: (() -> Void)? = nil) async {
         var finished = false
         await withCheckedContinuation { continuation in
             loadItems {
@@ -47,6 +47,7 @@ class DynamicListViewStore<Item>: ObservableObject {
                     continuation.resume()
                 }
             }
+            action?()
         }
     }
 
@@ -63,17 +64,14 @@ class DynamicListViewStore<Item>: ObservableObject {
                 return items.filter { item in searchingByQuery(self.query, item) }
             }
             .sink { completion in
-                switch completion {
-                case let .failure(error):
+                if case let .failure(error) = completion {
                     self.items = []
                     self.isLoading = false
                     self.error = error
                     didFinishLoadingItems()
-                case .finished:
-                    break
                 }
-            } receiveValue: { [weak self] feed in
-                self?.items = feed
+            } receiveValue: { [weak self] (items: [Item]) in
+                self?.items = items
                 withAnimation(.default) {
                     self?.isLoading = false
                 }
@@ -88,8 +86,9 @@ class DynamicListViewStore<Item>: ObservableObject {
     }
 
     private func filteringItems(_ items: [Item]) throws -> [Item] {
-        guard topics.count > 0 else { return items }
-        let index = topics.firstIndex(where: { $0.name == self.topicSelected }) ?? 0
+        guard topics.count > 0, let index = topics.firstIndex(where: { $0.name == self.topicSelected }) else {
+            return items
+        }
         let predicate = topics[index].predicate
         return try items.filter(predicate)
     }

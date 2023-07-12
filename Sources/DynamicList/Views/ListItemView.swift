@@ -29,6 +29,6 @@ struct ListItemView_Previews: PreviewProvider {
             FruitItemView(item: fruit)
         }, detailItemView: {
             DetailFruitItemView(item: fruit)
-        }).previewLayout(.sizeThatFits)
+        })
     }
 }
