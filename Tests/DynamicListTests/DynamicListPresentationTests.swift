@@ -9,9 +9,13 @@ final class DynamicListPresentationTests: XCTestCase {
     func test_search_isLocalized() throws {
         XCTAssertEqual(DynamicListPresenter.search, localized("search"))
     }
-    
+
     func test_data_not_available_isLocalized() throws {
         XCTAssertEqual(DynamicListPresenter.dataNotAvailable, localized("data_not_available"))
+    }
+
+    func test_topics_isLocalized() throws {
+        XCTAssertEqual(DynamicListPresenter.topics, localized("topics"))
     }
 
     // MARK: - Test helpers

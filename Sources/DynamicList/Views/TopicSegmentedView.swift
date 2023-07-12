@@ -10,7 +10,7 @@ struct TopicSegmentedView: View {
 
     var body: some View {
         if let topics, !topics.isEmpty {
-            Picker("Topics", selection: $topicSelected) {
+            Picker(DynamicListPresenter.topics, selection: $topicSelected) {
                 ForEach(topics, id: \.self) { topic in
                     Text(topic)
                 }
