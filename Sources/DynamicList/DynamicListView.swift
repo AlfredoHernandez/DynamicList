@@ -59,7 +59,7 @@ public struct DynamicListView<Item: Identifiable>: View {
                         }
                     }
                 })
-                .listStyle(.plain)
+                .dynamicListStyle(type: config.listStyle)
             }
             .navigationTitle(title)
             .toolbar(content: {
@@ -105,7 +105,7 @@ struct DynamicListView_Previews: PreviewProvider {
             }, errorView: {
                 LoadingErrorView(icon: "x.circle")
             },
-            config: DynamicListConfig(topicsToolbarPlacement: .principal)
+            config: DynamicListConfig(topicsToolbarPlacement: .principal, listStyle: .grouped)
         ).onAppear {
             addMoreItemsForTesting()
         }
