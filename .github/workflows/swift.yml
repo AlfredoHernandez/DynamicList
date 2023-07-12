@@ -21,7 +21,7 @@ jobs:
       run: sudo xcode-select -switch /Applications/Xcode_14.3.1.app
     
     - name: Build
-      run: swift build -v
+      run: swift build -vv
     
     - name: Run tests
-      run: swift test -v
+      run: swift test list --parallel -vv
