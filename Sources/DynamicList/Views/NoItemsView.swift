@@ -8,7 +8,7 @@ public struct NoItemsView: View {
     let message: String
     let icon: String
 
-    public init(message: String = "Oops, looks like there's no available data.", icon: String = "") {
+    public init(message: String = DynamicListPresenter.dataNotAvailable, icon: String = "") {
         self.message = message
         self.icon = icon
     }

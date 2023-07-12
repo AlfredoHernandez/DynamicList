@@ -4,6 +4,7 @@
 
 import Foundation
 
-class DynamicListPresenter {
-    static let search = NSLocalizedString("search", bundle: Bundle.module, comment: "")
+public class DynamicListPresenter {
+    public static let search = NSLocalizedString("search", bundle: Bundle.module, comment: "")
+    public static let dataNotAvailable = NSLocalizedString("data_not_available", bundle: Bundle.module, comment: "")
 }
