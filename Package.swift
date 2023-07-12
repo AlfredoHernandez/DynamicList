@@ -4,6 +4,7 @@ import PackageDescription
 
 let package = Package(
     name: "DynamicList",
+    defaultLocalization: "en",
     platforms: [
         .iOS(.v14),
         .macOS(.v12),

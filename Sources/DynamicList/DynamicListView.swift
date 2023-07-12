@@ -6,6 +6,11 @@ import Combine
 import SwiftUI
 
 public struct DynamicListView<Item: Identifiable>: View {
+    #if os(macOS)
+    let toolbarPlacement: ToolbarItemPlacement = .automatic
+    #else
+    let toolbarPlacement: ToolbarItemPlacement = .bottomBar
+    #endif
     @ObservedObject var store: DynamicListViewStore<Item>
 
     let title: String
@@ -37,7 +42,11 @@ public struct DynamicListView<Item: Identifiable>: View {
                     await store.loadItemsAsync()
                 }
                 .redacted(reason: store.isLoading ? .placeholder : [])
-                .searchableEnabled(text: $store.query, prompt: Text("Search"), display: store.searchingByQuery != nil)
+                .searchableEnabled(
+                    text: $store.query,
+                    prompt: Text(DynamicListPresenter.search),
+                    display: store.searchingByQuery != nil
+                )
                 .onChange(of: store.query, perform: { _ in
                     loadItems()
                 })
@@ -56,7 +65,7 @@ public struct DynamicListView<Item: Identifiable>: View {
             }
             .navigationTitle(title)
             .toolbar(content: {
-                ToolbarItem(placement: .automatic) {
+                ToolbarItem(placement: toolbarPlacement) {
                     TopicSegmentedView(
                         topicSelected: $store.topicSelected,
                         topics: store.topics.map(\.name)
