@@ -1,0 +1,24 @@
+//
+//  Copyright © 2023 Jesús Alfredo Hernández Alarcón. All rights reserved.
+//
+
+@testable import DynamicList
+import XCTest
+
+final class DynamicListPresentationTests: XCTestCase {
+    func test_search_isLocalized() throws {
+        XCTAssertEqual(DynamicListPresenter.search, localized("search"))
+    }
+
+    // MARK: - Test helpers
+
+    private func localized(_ key: String, param: CVarArg? = nil, table: String = "Localizable", file: StaticString = #filePath, line: UInt = #line) -> String {
+        let bundle = Bundle.module
+        let value = bundle.localizedString(forKey: key, value: nil, table: table)
+        if value == key {
+            XCTFail("Missing localized string for key: `\(key)` in table: `\(table)`", file: file, line: line)
+        }
+        if let param { return String(format: value, param) }
+        return value
+    }
+}

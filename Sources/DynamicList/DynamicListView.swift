@@ -42,7 +42,11 @@ public struct DynamicListView<Item: Identifiable>: View {
                     await store.loadItemsAsync()
                 }
                 .redacted(reason: store.isLoading ? .placeholder : [])
-                .searchableEnabled(text: $store.query, prompt: Text("Search"), display: store.searchingByQuery != nil)
+                .searchableEnabled(
+                    text: $store.query,
+                    prompt: Text(DynamicListPresenter.search),
+                    display: store.searchingByQuery != nil
+                )
                 .onChange(of: store.query, perform: { _ in
                     loadItems()
                 })
