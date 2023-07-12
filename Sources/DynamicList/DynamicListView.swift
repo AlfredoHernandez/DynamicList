@@ -6,30 +6,28 @@ import Combine
 import SwiftUI
 
 public struct DynamicListView<Item: Identifiable>: View {
-    #if os(macOS)
-    let toolbarPlacement: ToolbarItemPlacement = .automatic
-    #else
-    let toolbarPlacement: ToolbarItemPlacement = .bottomBar
-    #endif
     @ObservedObject var store: DynamicListViewStore<Item>
 
     let title: String
     let listItemView: (Item) -> ListItemView<Item>
     let noItemsView: () -> any View
     let errorView: () -> any View
+    let config: DynamicListConfig
 
     init(
         title: String,
         listItemView: @escaping (Item) -> ListItemView<Item>,
         store: DynamicListViewStore<Item>,
         noItemsView: @escaping () -> any View,
-        errorView: @escaping () -> any View
+        errorView: @escaping () -> any View,
+        config: DynamicListConfig
     ) {
         self.title = title
         self.listItemView = listItemView
         self.store = store
         self.noItemsView = noItemsView
         self.errorView = errorView
+        self.config = config
     }
 
     public var body: some View {
@@ -65,7 +63,7 @@ public struct DynamicListView<Item: Identifiable>: View {
             }
             .navigationTitle(title)
             .toolbar(content: {
-                ToolbarItem(placement: toolbarPlacement) {
+                ToolbarItem(placement: config.topicsToolbarPlacement) {
                     TopicSegmentedView(
                         topicSelected: $store.topicSelected,
                         topics: store.topics.map(\.name)
@@ -106,7 +104,8 @@ struct DynamicListView_Previews: PreviewProvider {
                 NoItemsView(icon: "newspaper")
             }, errorView: {
                 LoadingErrorView(icon: "x.circle")
-            }
+            },
+            config: DynamicListConfig(topicsToolbarPlacement: .principal)
         ).onAppear {
             addMoreItemsForTesting()
         }

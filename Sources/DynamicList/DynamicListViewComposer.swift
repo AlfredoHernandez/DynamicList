@@ -39,7 +39,8 @@ public class DynamicListViewComposer {
         itemFeedView: @escaping (Item) -> any View,
         detailItemView: ((Item) -> any View)? = nil,
         noItemsView: @escaping () -> any View = { NoItemsView() },
-        errorView: @escaping () -> any View = { LoadingErrorView() }
+        errorView: @escaping () -> any View = { LoadingErrorView() },
+        config: DynamicListConfig
     ) -> DynamicListView<Item> {
         DynamicListView<Item>(
             title: title,
@@ -56,7 +57,8 @@ public class DynamicListViewComposer {
                 loader: loader
             ),
             noItemsView: noItemsView,
-            errorView: errorView
+            errorView: errorView,
+            config: config
         )
     }
 }

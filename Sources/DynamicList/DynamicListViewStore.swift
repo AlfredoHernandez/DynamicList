@@ -38,7 +38,7 @@ class DynamicListViewStore<Item>: ObservableObject {
             topicSelected = firstTopic.name
         }
     }
-    
+
     func loadFirstTime(_ action: (() -> Void)? = nil) async {
         if firstTime {
             await loadItemsAsync(action)
