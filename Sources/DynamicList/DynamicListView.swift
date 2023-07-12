@@ -56,7 +56,7 @@ public struct DynamicListView<Item: Identifiable>: View {
             }
             .navigationTitle(title)
             .toolbar(content: {
-                ToolbarItem(placement: .bottomBar) {
+                ToolbarItem(placement: .automatic) {
                     TopicSegmentedView(
                         topicSelected: $store.topicSelected,
                         topics: store.topics.map(\.name)

@@ -70,8 +70,8 @@ class DynamicListViewStore<Item>: ObservableObject {
                     self.error = error
                     didFinishLoadingItems()
                 }
-            } receiveValue: { [weak self] feed in
-                self?.items = feed
+            } receiveValue: { [weak self] (items: [Item]) in
+                self?.items = items
                 withAnimation(.default) {
                     self?.isLoading = false
                 }
