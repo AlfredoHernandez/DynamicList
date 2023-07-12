@@ -18,6 +18,10 @@ final class DynamicListPresentationTests: XCTestCase {
         XCTAssertEqual(DynamicListPresenter.topics, localized("topics"))
     }
 
+    func test_networkError_isLocalized() throws {
+        XCTAssertEqual(DynamicListPresenter.networkError, localized("network_error"))
+    }
+
     // MARK: - Test helpers
 
     private func localized(_ key: String, param: CVarArg? = nil, table: String = "Localizable", file: StaticString = #filePath, line: UInt = #line) -> String {

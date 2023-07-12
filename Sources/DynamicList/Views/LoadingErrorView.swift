@@ -8,7 +8,7 @@ public struct LoadingErrorView: View {
     let message: String
     let icon: String
 
-    public init(message: String = "Oops, looks like there's a network error.", icon: String = "") {
+    public init(message: String = DynamicListPresenter.networkError, icon: String = "") {
         self.message = message
         self.icon = icon
     }
