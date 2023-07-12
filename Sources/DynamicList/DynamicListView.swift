@@ -6,6 +6,11 @@ import Combine
 import SwiftUI
 
 public struct DynamicListView<Item: Identifiable>: View {
+    #if os(macOS)
+    let toolbarPlacement: ToolbarItemPlacement = .automatic
+    #else
+    let toolbarPlacement: ToolbarItemPlacement = .bottomBar
+    #endif
     @ObservedObject var store: DynamicListViewStore<Item>
 
     let title: String
@@ -56,7 +61,7 @@ public struct DynamicListView<Item: Identifiable>: View {
             }
             .navigationTitle(title)
             .toolbar(content: {
-                ToolbarItem(placement: .automatic) {
+                ToolbarItem(placement: toolbarPlacement) {
                     TopicSegmentedView(
                         topicSelected: $store.topicSelected,
                         topics: store.topics.map(\.name)
