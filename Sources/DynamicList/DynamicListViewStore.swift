@@ -13,12 +13,13 @@ class DynamicListViewStore<Item>: ObservableObject {
     @Published var query: String = ""
 
     var error: Error?
-    private let loader: () -> AnyPublisher<[Item], Error>
+    private var firstTime = true
     private var cancellables = Set<AnyCancellable>()
 
-    public let topics: [Topic<Item>]
-    public let searchingByQuery: ((String, Item) -> Bool)?
-    public let generateRandomItemsForLoading: (() -> [Item])?
+    let topics: [Topic<Item>]
+    let searchingByQuery: ((String, Item) -> Bool)?
+    private let generateRandomItemsForLoading: (() -> [Item])?
+    private let loader: () -> AnyPublisher<[Item], Error>
 
     init(
         items: [Item] = [],
@@ -35,6 +36,13 @@ class DynamicListViewStore<Item>: ObservableObject {
 
         if let firstTopic = topics.first {
             topicSelected = firstTopic.name
+        }
+    }
+    
+    func loadFirstTime(_ action: (() -> Void)? = nil) async {
+        if firstTime {
+            await loadItemsAsync(action)
+            firstTime = false
         }
     }
 

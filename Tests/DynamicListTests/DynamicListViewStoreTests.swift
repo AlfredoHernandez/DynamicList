@@ -13,6 +13,21 @@ final class DynamicListViewStoreTests: XCTestCase {
 
         XCTAssertEqual(loader.loadCallCount, 0)
     }
+    
+    func test_loadFirstTime_requestLoadItems() async {
+        let loader = LoaderSpy<String>()
+        let sut = DynamicListViewStore<String>(loader: loader.publisher)
+
+        await sut.loadFirstTime {
+            loader.complete(with: ["any"], at: 0)
+        }
+        XCTAssertEqual(loader.loadCallCount, 1)
+        
+        await sut.loadFirstTime {
+            loader.complete(with: ["any"], at: 1)
+        }
+        XCTAssertEqual(loader.loadCallCount, 1)
+    }
 
     func test_loadItemsAsync_displaysLoadingIndicator() async {
         let loader = LoaderSpy<String>()

@@ -73,7 +73,11 @@ public struct DynamicListView<Item: Identifiable>: View {
                 }
             })
         }
-        .onAppear(perform: loadItems)
+        .onAppear {
+            Task {
+                await store.loadFirstTime()
+            }
+        }
         .onChange(of: store.topicSelected, perform: { _ in
             loadItems()
         })
