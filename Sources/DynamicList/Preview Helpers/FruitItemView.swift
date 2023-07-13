@@ -11,6 +11,14 @@ struct FruitItemView: View {
 
     var body: some View {
         HStack {
+            ZStack {
+                Circle()
+                    .shadow(radius: 4)
+                    .foregroundColor(item.color.toColor())
+                Text(item.symbol)
+                    .font(.system(size: 48))
+            }.frame(width: 64, height: 64)
+
             VStack(alignment: .leading, spacing: 8) {
                 Text(item.name)
                     .bold()
@@ -20,8 +28,24 @@ struct FruitItemView: View {
                     .font(.callout)
                     .foregroundColor(.secondary)
             }
-            Text(item.symbol)
-        }.frame(maxWidth: .infinity)
+        }
+    }
+}
+
+extension FruitColor {
+    func toColor() -> Color {
+        switch self {
+        case .green:
+            .green
+        case .orange:
+            .orange
+        case .purple:
+            .purple
+        case .red:
+            .red
+        case .yellow:
+            .yellow
+        }
     }
 }
 

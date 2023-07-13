@@ -36,18 +36,14 @@ public struct DynamicListView<Item: Identifiable>: View {
                 List(store.items, id: \.id) {
                     listItemView($0)
                 }
-                .refreshableIfAvailable {
-                    await store.loadItemsAsync()
-                }
+                .refreshableIfAvailable { await store.loadItemsAsync() }
                 .redacted(reason: store.isLoading ? .placeholder : [])
                 .searchableEnabled(
                     text: $store.query,
                     prompt: Text(DynamicListPresenter.search),
                     display: store.searchingByQuery != nil
                 )
-                .onChange(of: store.query, perform: { _ in
-                    loadItems()
-                })
+                .onChange(of: store.query, perform: { _ in loadItems() })
                 .overlay(Group {
                     if store.items.isEmpty, store.error == nil {
                         withAnimation(.easeIn) {
@@ -71,20 +67,16 @@ public struct DynamicListView<Item: Identifiable>: View {
                 }
             })
         }
-        .onAppear {
-            Task {
-                await store.loadFirstTime()
-            }
-        }
-        .onChange(of: store.topicSelected, perform: { _ in
-            loadItems()
-        })
+        .onAppear(perform: loadFirstTime)
+        .onChange(of: store.topicSelected, perform: { _ in loadItems() })
     }
 
     private func loadItems() {
-        Task {
-            await store.loadItemsAsync()
-        }
+        Task { await store.loadItemsAsync() }
+    }
+
+    private func loadFirstTime() {
+        Task { await store.loadFirstTime() }
     }
 }
 

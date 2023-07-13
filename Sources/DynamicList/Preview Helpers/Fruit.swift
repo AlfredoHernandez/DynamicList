@@ -8,7 +8,7 @@ import Combine
 import Foundation
 import SwiftUI
 
-enum FruitColor {
+enum FruitColor: CaseIterable {
     case red
     case yellow
     case green
@@ -67,7 +67,7 @@ let filters: [Topic] = [
 func randomItemsGenerator() -> [Fruit] {
     var fruits: [Fruit] = []
     for _ in 1 ... 20 {
-        let fruit = Fruit(name: "Sandía", symbol: "🍉", color: .red)
+        let fruit = Fruit(name: "Lorem ipsum", symbol: "$#", color: FruitColor.allCases.randomElement()!)
         fruits.append(fruit)
     }
     return fruits
