@@ -6,8 +6,20 @@ import Combine
 import Foundation
 import SwiftUI
 
+public struct DynamicListSection<Item>: Identifiable {
+    public var id: UUID
+    let name: String
+    var items: [Item]
+
+    public init(id: UUID, name: String, items: [Item]) {
+        self.id = id
+        self.name = name
+        self.items = items
+    }
+}
+
 class DynamicListViewStore<Item>: ObservableObject {
-    @Published var items: [Item]
+    @Published var items: [DynamicListSection<Item>]
     @Published var topicSelected: String = ""
     @Published public private(set) var isLoading = false
     @Published var query: String = ""
@@ -22,7 +34,7 @@ class DynamicListViewStore<Item>: ObservableObject {
     private let loader: () -> AnyPublisher<[Item], Error>
 
     init(
-        items: [Item] = [],
+        items: [DynamicListSection<Item>] = [DynamicListSection(id: UUID(), name: "", items: [])],
         topics: [Topic<Item>] = [],
         searchingByQuery: ((String, Item) -> Bool)? = nil,
         generateRandomItemsForLoading: (() -> [Item])? = nil,
@@ -73,13 +85,25 @@ class DynamicListViewStore<Item>: ObservableObject {
             }
             .sink { completion in
                 if case let .failure(error) = completion {
-                    self.items = []
+                    // TODO: Keep same items when failed after success
+                    if let mainSection = self.items.first {
+                        var mainSectionCopy = mainSection
+                        mainSectionCopy.items = []
+                        self.items.remove(at: 0)
+                        self.items.insert(mainSectionCopy, at: 0)
+                    }
                     self.isLoading = false
                     self.error = error
                     didFinishLoadingItems()
                 }
             } receiveValue: { [weak self] (items: [Item]) in
-                self?.items = items
+                // TODO: Update only first section
+                if let mainSection = self?.items.first {
+                    var mainSectionCopy = mainSection
+                    mainSectionCopy.items = items
+                    self?.items.remove(at: 0)
+                    self?.items.insert(mainSectionCopy, at: 0)
+                }
                 withAnimation(.default) {
                     self?.isLoading = false
                 }
@@ -90,7 +114,12 @@ class DynamicListViewStore<Item>: ObservableObject {
 
     private func displayingLoadingItems() {
         guard let randomItemsGenerator = generateRandomItemsForLoading else { return }
-        items = randomItemsGenerator()
+        if let mainSection = items.first {
+            var mainSectionCopy = mainSection
+            mainSectionCopy.items = randomItemsGenerator()
+            items.remove(at: 0)
+            items.insert(mainSectionCopy, at: 0)
+        }
     }
 
     private func filteringItems(_ items: [Item]) throws -> [Item] {

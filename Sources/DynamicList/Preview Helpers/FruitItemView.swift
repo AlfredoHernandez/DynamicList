@@ -35,16 +35,16 @@ struct FruitItemView: View {
 extension FruitColor {
     func toColor() -> Color {
         switch self {
-        case .green:
-            .green
-        case .orange:
-            .orange
-        case .purple:
-            .purple
-        case .red:
-            .red
-        case .yellow:
-            .yellow
+        case FruitColor.green:
+            return Color.green
+        case FruitColor.orange:
+            return Color.orange
+        case FruitColor.purple:
+            return Color.purple
+        case FruitColor.red:
+            return Color.red
+        case FruitColor.yellow:
+            return Color.yellow
         }
     }
 }

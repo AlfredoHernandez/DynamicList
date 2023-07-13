@@ -33,8 +33,14 @@ public struct DynamicListView<Item: Identifiable>: View {
     public var body: some View {
         NavigationView {
             VStack {
-                List(store.items, id: \.id) {
-                    listItemView($0)
+                List {
+                    ForEach(self.store.items, id: \.id) { (section: DynamicListSection) in
+                        Section(header: Text(section.name)) {
+                            ForEach(section.items, id: \.id) { (item: Item) in
+                                listItemView(item)
+                            }
+                        }
+                    }
                 }
                 .refreshableIfAvailable { await store.loadItemsAsync() }
                 .redacted(reason: store.isLoading ? .placeholder : [])
@@ -84,6 +90,12 @@ struct DynamicListView_Previews: PreviewProvider {
     static var previews: some View {
         DynamicListViewComposer.compose(
             title: "My fruit list",
+            sections: [
+                DynamicListSection(id: UUID(), name: "Fruits", items: []),
+                DynamicListSection(id: UUID(), name: "Ads", items: [
+                    Fruit(name: "Static Melón", symbol: "🍈", color: .orange),
+                ]),
+            ],
             loader: fruitsLoader.delay(for: .seconds(0.6), scheduler: DispatchQueue.main).eraseToAnyPublisher,
             topics: filters,
             searchingByQuery: { query, fruit in
