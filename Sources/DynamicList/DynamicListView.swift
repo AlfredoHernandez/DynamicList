@@ -33,11 +33,17 @@ public struct DynamicListView<Item: Identifiable>: View {
     public var body: some View {
         NavigationView {
             VStack {
-                List(store.items, id: \.id) {
-                    listItemView($0)
+                List {
+                    ForEach(store.items, id: \.id) { (section: DynamicListSection) in
+                        Section(header: AnyView(section.header)) {
+                            ForEach(section.items, id: \.id) { (item: Item) in
+                                listItemView(item)
+                                    .redacted(reason: store.isLoading ? .placeholder : [])
+                            }
+                        }
+                    }
                 }
                 .refreshableIfAvailable { await store.loadItemsAsync() }
-                .redacted(reason: store.isLoading ? .placeholder : [])
                 .searchableEnabled(
                     text: $store.query,
                     prompt: Text(DynamicListPresenter.search),
@@ -84,20 +90,43 @@ struct DynamicListView_Previews: PreviewProvider {
     static var previews: some View {
         DynamicListViewComposer.compose(
             title: "My fruit list",
-            loader: fruitsLoader.delay(for: .seconds(0.6), scheduler: DispatchQueue.main).eraseToAnyPublisher,
+            sections: [
+                DynamicListSection(
+                    id: UUID(),
+                    header: AdvertisementView(
+                        text: "You are using the free version, tap to unlock unlimited."
+                    ),
+                    items: []
+                ),
+            ],
+            loader: fruitsLoader.map { fruits in
+                fruits.map { AnyIdentifiable(UUID(), $0) }
+            }.delay(for: .seconds(0.6), scheduler: DispatchQueue.main).eraseToAnyPublisher,
             topics: filters,
-            searchingByQuery: { query, fruit in
-                query == "" ? true : fruit.name.range(of: query, options: [.diacriticInsensitive, .caseInsensitive]) != nil
+            searchingByQuery: { (query: String, anyIdentifiable: AnyIdentifiable) in
+                query == "" ? true : (anyIdentifiable.value as! Fruit).name.range(of: query, options: [.diacriticInsensitive, .caseInsensitive]) != nil
             },
             generateRandomItemsForLoading: randomItemsGenerator,
-            itemFeedView: FruitItemView.init,
-            detailItemView: DetailFruitItemView.init,
+            itemFeedView: { item in
+                if let fruit = item.value as? Fruit {
+                    return FruitItemView(item: fruit)
+                } else if let ad = item.value as? Advertisment {
+                    return AdvertisementView(text: ad.text)
+                }
+                return EmptyView()
+            },
+            detailItemView: { item in
+                if let fruit = item.value as? Fruit {
+                    return DetailFruitItemView(item: fruit)
+                }
+                return nil
+            },
             noItemsView: {
                 NoItemsView(icon: "newspaper")
             }, errorView: {
                 LoadingErrorView(icon: "x.circle")
             },
-            config: DynamicListConfig(topicsToolbarPlacement: .principal, listStyle: .grouped)
+            config: DynamicListConfig(topicsToolbarPlacement: .principal, listStyle: .plain)
         ).onAppear {
             addMoreItemsForTesting()
         }

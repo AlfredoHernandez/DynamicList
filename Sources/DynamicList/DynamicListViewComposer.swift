@@ -32,12 +32,13 @@ public class DynamicListViewComposer {
      - Returns: The Dynamic List View */
     public static func compose<Item>(
         title: String,
+        sections: [DynamicListSection<Item>] = [DynamicListSection(id: UUID(), header: EmptyView(), items: [])],
         loader: @escaping () -> AnyPublisher<[Item], Error>,
         topics: [Topic<Item>] = [],
         searchingByQuery: ((String, Item) -> Bool)? = nil,
         generateRandomItemsForLoading: (() -> [Item])? = nil,
         itemFeedView: @escaping (Item) -> any View,
-        detailItemView: ((Item) -> any View)? = nil,
+        detailItemView: ((Item) -> (any View)?)? = nil,
         noItemsView: @escaping () -> any View = { NoItemsView() },
         errorView: @escaping () -> any View = { LoadingErrorView() },
         config: DynamicListConfig
@@ -51,6 +52,7 @@ public class DynamicListViewComposer {
                 return ListItemView<Item>(itemFeedView: { itemFeedView(item) }, detailItemView: { detailedItemView })
             },
             store: DynamicListViewStore<Item>(
+                items: sections,
                 topics: topics,
                 searchingByQuery: searchingByQuery,
                 generateRandomItemsForLoading: generateRandomItemsForLoading,

@@ -23,6 +23,16 @@ struct Fruit: Identifiable {
     let color: FruitColor
 }
 
+struct AnyIdentifiable: Identifiable {
+    let id: AnyHashable
+    let value: Any
+
+    init(_ id: some Hashable, _ value: some Any) {
+        self.id = AnyHashable(id)
+        self.value = value
+    }
+}
+
 let fruitsLoader = CurrentValueSubject<[Fruit], Error>([
     Fruit(name: "Sandía", symbol: "🍉", color: .red),
     Fruit(name: "Pera", symbol: "🍐", color: .green),
@@ -58,16 +68,31 @@ func addMoreItemsForTesting() {
 
 let filters: [Topic] = [
     Topic(name: "All", predicate: { _ in true }),
-    Topic(name: "Orange", predicate: { (item: Fruit) in item.color == .orange }),
-    Topic(name: "Red", predicate: { (item: Fruit) in item.color == .red }),
+    Topic(name: "Orange", predicate: { (item: AnyIdentifiable) in
+        if let fruit = (item.value as? Fruit) {
+            return fruit.color == .orange
+        }
+        return false
+    }),
+    Topic(name: "Red", predicate: { (item: AnyIdentifiable) in
+        if let fruit = (item.value as? Fruit) {
+            return fruit.color == .red
+        }
+        return false
+    }),
     Topic(name: "No Items", predicate: { _ in false }),
     Topic(name: "Error", predicate: { _ in throw NSError(domain: "test", code: 1) }),
 ]
 
-func randomItemsGenerator() -> [Fruit] {
-    var fruits: [Fruit] = []
+struct Advertisment: Identifiable {
+    var id: UUID = .init()
+    let text: String
+}
+
+func randomItemsGenerator() -> [AnyIdentifiable] {
+    var fruits: [AnyIdentifiable] = []
     for _ in 1 ... 20 {
-        let fruit = Fruit(name: "Lorem ipsum", symbol: "$#", color: FruitColor.allCases.randomElement()!)
+        let fruit = AnyIdentifiable(UUID(), Fruit(name: "Lorem ipsum", symbol: "$#", color: FruitColor.allCases.randomElement()!))
         fruits.append(fruit)
     }
     return fruits

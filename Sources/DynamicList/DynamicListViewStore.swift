@@ -6,8 +6,20 @@ import Combine
 import Foundation
 import SwiftUI
 
+public struct DynamicListSection<Item>: Identifiable {
+    public var id: UUID
+    let header: any View
+    var items: [Item]
+
+    public init(id: UUID, header: any View, items: [Item]) {
+        self.id = id
+        self.header = header
+        self.items = items
+    }
+}
+
 class DynamicListViewStore<Item>: ObservableObject {
-    @Published var items: [Item]
+    @Published var items: [DynamicListSection<Item>]
     @Published var topicSelected: String = ""
     @Published public private(set) var isLoading = false
     @Published var query: String = ""
@@ -22,7 +34,7 @@ class DynamicListViewStore<Item>: ObservableObject {
     private let loader: () -> AnyPublisher<[Item], Error>
 
     init(
-        items: [Item] = [],
+        items: [DynamicListSection<Item>] = [DynamicListSection(id: UUID(), header: EmptyView(), items: [])],
         topics: [Topic<Item>] = [],
         searchingByQuery: ((String, Item) -> Bool)? = nil,
         generateRandomItemsForLoading: (() -> [Item])? = nil,
@@ -71,15 +83,15 @@ class DynamicListViewStore<Item>: ObservableObject {
                 guard let self, let searchingByQuery else { return items }
                 return items.filter { item in searchingByQuery(self.query, item) }
             }
-            .sink { completion in
+            .sink { [weak self] completion in
                 if case let .failure(error) = completion {
-                    self.items = []
-                    self.isLoading = false
-                    self.error = error
+                    self?.insert([], at: 0)
+                    self?.isLoading = false
+                    self?.error = error
                     didFinishLoadingItems()
                 }
             } receiveValue: { [weak self] (items: [Item]) in
-                self?.items = items
+                self?.insert(items, at: 0)
                 withAnimation(.default) {
                     self?.isLoading = false
                 }
@@ -90,7 +102,7 @@ class DynamicListViewStore<Item>: ObservableObject {
 
     private func displayingLoadingItems() {
         guard let randomItemsGenerator = generateRandomItemsForLoading else { return }
-        items = randomItemsGenerator()
+        insert(randomItemsGenerator(), at: 0)
     }
 
     private func filteringItems(_ items: [Item]) throws -> [Item] {
@@ -99,5 +111,14 @@ class DynamicListViewStore<Item>: ObservableObject {
         }
         let predicate = topics[index].predicate
         return try items.filter(predicate)
+    }
+
+    private func insert(_ items: [Item], at section: Int = 0) {
+        if let mainSection = self.items.first {
+            var mainSectionCopy = mainSection
+            mainSectionCopy.items = items
+            self.items.remove(at: section)
+            self.items.insert(mainSectionCopy, at: section)
+        }
     }
 }

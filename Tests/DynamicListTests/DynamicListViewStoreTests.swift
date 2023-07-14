@@ -55,7 +55,7 @@ final class DynamicListViewStoreTests: XCTestCase {
             XCTAssertNil(sut.error)
             loader.complete(with: ["a", "b", "c"], at: 1)
         }
-        XCTAssertEqual(sut.items, ["a", "b", "c"])
+        XCTAssertEqual(sut.items.first?.items, ["a", "b", "c"])
         XCTAssertNil(sut.error)
     }
 
@@ -67,7 +67,7 @@ final class DynamicListViewStoreTests: XCTestCase {
         )
 
         await sut.loadItemsAsync {
-            XCTAssertEqual(sut.items.count, 0)
+            XCTAssertEqual(sut.items.first?.items.count, 0)
             loader.complete(with: anyNSError(), at: 0)
         }
     }
@@ -81,7 +81,7 @@ final class DynamicListViewStoreTests: XCTestCase {
         )
 
         await sut.loadItemsAsync {
-            XCTAssertEqual(sut.items.count, randomItems.count)
+            XCTAssertEqual(sut.items.first?.items.count, randomItems.count)
             loader.complete(with: anyNSError(), at: 0)
         }
     }
@@ -98,7 +98,7 @@ final class DynamicListViewStoreTests: XCTestCase {
             loader.complete(with: items, at: 0)
         }
 
-        XCTAssertEqual(sut.items, items)
+        XCTAssertEqual(sut.items.first?.items, items)
     }
 
     func test_filtersItemsByTopic_whenTopicsAreNotEmpty() async {
@@ -119,7 +119,7 @@ final class DynamicListViewStoreTests: XCTestCase {
             loader.complete(with: items, at: 0)
         }
 
-        XCTAssertEqual(sut.items, ["abcd", "dcba", "abba"])
+        XCTAssertEqual(sut.items.first?.items, ["abcd", "dcba", "abba"])
     }
 
     func test_searchByQuery_returnsItemsSearchingByQuery() async {
@@ -137,7 +137,7 @@ final class DynamicListViewStoreTests: XCTestCase {
             loader.complete(with: items, at: 0)
         }
 
-        XCTAssertEqual(sut.items, ["home", "office", "todo"])
+        XCTAssertEqual(sut.items.first?.items, ["home", "office", "todo"])
     }
 
     func test_searchByQuery_returnsAllItemsIfDisabled() async {
@@ -153,6 +153,6 @@ final class DynamicListViewStoreTests: XCTestCase {
             loader.complete(with: items, at: 0)
         }
 
-        XCTAssertEqual(sut.items, items)
+        XCTAssertEqual(sut.items.first?.items, items)
     }
 }
