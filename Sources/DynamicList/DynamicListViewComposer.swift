@@ -52,7 +52,7 @@ public class DynamicListViewComposer {
                 return ListItemView<Item>(itemFeedView: { itemFeedView(item) }, detailItemView: { detailedItemView })
             },
             store: DynamicListViewStore<Item>(
-                items: sections,
+                sections: sections,
                 topics: topics,
                 searchingByQuery: searchingByQuery,
                 generateRandomItemsForLoading: generateRandomItemsForLoading,

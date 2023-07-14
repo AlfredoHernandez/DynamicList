@@ -21,7 +21,7 @@ public struct DynamicListSection<Item>: Identifiable {
 }
 
 class DynamicListViewStore<Item>: ObservableObject {
-    @Published var items: [DynamicListSection<Item>]
+    @Published var sections: [DynamicListSection<Item>]
     @Published var topicSelected: String = ""
     @Published public private(set) var isLoading = false
     @Published var query: String = ""
@@ -36,13 +36,13 @@ class DynamicListViewStore<Item>: ObservableObject {
     private let loader: () -> AnyPublisher<[Item], Error>
 
     init(
-        items: [DynamicListSection<Item>] = [DynamicListSection(id: UUID(), items: [])],
+        sections: [DynamicListSection<Item>] = [DynamicListSection(id: UUID(), items: [])],
         topics: [Topic<Item>] = [],
         searchingByQuery: ((String, Item) -> Bool)? = nil,
         generateRandomItemsForLoading: (() -> [Item])? = nil,
         loader: @escaping () -> AnyPublisher<[Item], Error>
     ) {
-        self.items = items
+        self.sections = sections
         self.topics = topics
         self.searchingByQuery = searchingByQuery
         self.generateRandomItemsForLoading = generateRandomItemsForLoading
@@ -116,11 +116,11 @@ class DynamicListViewStore<Item>: ObservableObject {
     }
 
     private func insert(_ items: [Item], at section: Int = 0) {
-        if let mainSection = self.items.first {
+        if let mainSection = sections.first {
             var mainSectionCopy = mainSection
             mainSectionCopy.items = items
-            self.items.remove(at: section)
-            self.items.insert(mainSectionCopy, at: section)
+            sections.remove(at: section)
+            sections.insert(mainSectionCopy, at: section)
         }
     }
 }

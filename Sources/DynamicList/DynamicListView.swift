@@ -34,7 +34,7 @@ public struct DynamicListView<Item: Identifiable>: View {
         NavigationView {
             VStack {
                 List {
-                    ForEach(store.items, id: \.id) { (section: DynamicListSection) in
+                    ForEach(store.sections, id: \.id) { (section: DynamicListSection) in
                         Section {
                             ForEach(section.items, id: \.id) { (item: Item) in
                                 listItemView(item)
@@ -55,7 +55,7 @@ public struct DynamicListView<Item: Identifiable>: View {
                 )
                 .onChange(of: store.query, perform: { _ in loadItems() })
                 .overlay(Group {
-                    if let items = store.items.first?.items, items.isEmpty, store.error == nil {
+                    if let items = store.sections.first?.items, items.isEmpty, store.error == nil {
                         withAnimation(.easeIn) {
                             AnyView(noItemsView())
                         }
