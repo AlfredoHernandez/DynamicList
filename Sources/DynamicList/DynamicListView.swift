@@ -35,11 +35,15 @@ public struct DynamicListView<Item: Identifiable>: View {
             VStack {
                 List {
                     ForEach(store.items, id: \.id) { (section: DynamicListSection) in
-                        Section(header: AnyView(section.header)) {
+                        Section {
                             ForEach(section.items, id: \.id) { (item: Item) in
                                 listItemView(item)
                                     .redacted(reason: store.isLoading ? .placeholder : [])
                             }
+                        } header: {
+                            AnyView(section.header)
+                        } footer: {
+                            AnyView(section.footer)
                         }
                     }
                 }

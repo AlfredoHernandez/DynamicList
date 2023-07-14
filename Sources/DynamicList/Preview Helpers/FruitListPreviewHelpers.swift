@@ -28,6 +28,11 @@ let defaultPreviewSection = DynamicListSection<AnyIdentifiable>(
     header: AdvertisementView(
         text: "You are using the free version, tap to unlock unlimited."
     ),
+    footer: HStack(alignment: .center) {
+        Text("This is the end of the list ✅")
+            .font(.callout)
+            .foregroundColor(.secondary)
+    },
     items: []
 )
 
