@@ -34,7 +34,7 @@ public struct DynamicListView<Item: Identifiable>: View {
         NavigationView {
             VStack {
                 List {
-                    ForEach(self.store.items, id: \.id) { (section: DynamicListSection) in
+                    ForEach(store.items, id: \.id) { (section: DynamicListSection) in
                         Section(header: Text(section.name)) {
                             ForEach(section.items, id: \.id) { (item: Item) in
                                 listItemView(item)

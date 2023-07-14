@@ -83,27 +83,15 @@ class DynamicListViewStore<Item>: ObservableObject {
                 guard let self, let searchingByQuery else { return items }
                 return items.filter { item in searchingByQuery(self.query, item) }
             }
-            .sink { completion in
+            .sink { [weak self] completion in
                 if case let .failure(error) = completion {
-                    // TODO: Keep same items when failed after success
-                    if let mainSection = self.items.first {
-                        var mainSectionCopy = mainSection
-                        mainSectionCopy.items = []
-                        self.items.remove(at: 0)
-                        self.items.insert(mainSectionCopy, at: 0)
-                    }
-                    self.isLoading = false
-                    self.error = error
+                    self?.insert([], at: 0)
+                    self?.isLoading = false
+                    self?.error = error
                     didFinishLoadingItems()
                 }
             } receiveValue: { [weak self] (items: [Item]) in
-                // TODO: Update only first section
-                if let mainSection = self?.items.first {
-                    var mainSectionCopy = mainSection
-                    mainSectionCopy.items = items
-                    self?.items.remove(at: 0)
-                    self?.items.insert(mainSectionCopy, at: 0)
-                }
+                self?.insert(items, at: 0)
                 withAnimation(.default) {
                     self?.isLoading = false
                 }
@@ -114,12 +102,7 @@ class DynamicListViewStore<Item>: ObservableObject {
 
     private func displayingLoadingItems() {
         guard let randomItemsGenerator = generateRandomItemsForLoading else { return }
-        if let mainSection = items.first {
-            var mainSectionCopy = mainSection
-            mainSectionCopy.items = randomItemsGenerator()
-            items.remove(at: 0)
-            items.insert(mainSectionCopy, at: 0)
-        }
+        insert(randomItemsGenerator(), at: 0)
     }
 
     private func filteringItems(_ items: [Item]) throws -> [Item] {
@@ -128,5 +111,14 @@ class DynamicListViewStore<Item>: ObservableObject {
         }
         let predicate = topics[index].predicate
         return try items.filter(predicate)
+    }
+
+    private func insert(_ items: [Item], at section: Int = 0) {
+        if let mainSection = self.items.first {
+            var mainSectionCopy = mainSection
+            mainSectionCopy.items = items
+            self.items.remove(at: section)
+            self.items.insert(mainSectionCopy, at: section)
+        }
     }
 }
