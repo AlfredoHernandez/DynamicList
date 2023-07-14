@@ -8,12 +8,12 @@ import SwiftUI
 
 public struct DynamicListSection<Item>: Identifiable {
     public var id: UUID
-    let name: String
+    let header: any View
     var items: [Item]
 
-    public init(id: UUID, name: String, items: [Item]) {
+    public init(id: UUID, header: any View, items: [Item]) {
         self.id = id
-        self.name = name
+        self.header = header
         self.items = items
     }
 }
@@ -34,7 +34,7 @@ class DynamicListViewStore<Item>: ObservableObject {
     private let loader: () -> AnyPublisher<[Item], Error>
 
     init(
-        items: [DynamicListSection<Item>] = [DynamicListSection(id: UUID(), name: "", items: [])],
+        items: [DynamicListSection<Item>] = [DynamicListSection(id: UUID(), header: EmptyView(), items: [])],
         topics: [Topic<Item>] = [],
         searchingByQuery: ((String, Item) -> Bool)? = nil,
         generateRandomItemsForLoading: (() -> [Item])? = nil,

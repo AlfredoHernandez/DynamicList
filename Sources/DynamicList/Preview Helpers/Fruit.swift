@@ -26,8 +26,8 @@ struct Fruit: Identifiable {
 struct AnyIdentifiable: Identifiable {
     let id: AnyHashable
     let value: Any
-    
-    init<ID: Hashable, Value: Any>(_ id: ID, _ value: Value) {
+
+    init(_ id: some Hashable, _ value: some Any) {
         self.id = AnyHashable(id)
         self.value = value
     }
@@ -85,7 +85,7 @@ let filters: [Topic] = [
 ]
 
 struct Advertisment: Identifiable {
-    var id: UUID = UUID()
+    var id: UUID = .init()
     let text: String
 }
 

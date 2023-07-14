@@ -32,7 +32,7 @@ public class DynamicListViewComposer {
      - Returns: The Dynamic List View */
     public static func compose<Item>(
         title: String,
-        sections: [DynamicListSection<Item>] = [DynamicListSection(id: UUID(), name: "", items: [])],
+        sections: [DynamicListSection<Item>] = [DynamicListSection(id: UUID(), header: EmptyView(), items: [])],
         loader: @escaping () -> AnyPublisher<[Item], Error>,
         topics: [Topic<Item>] = [],
         searchingByQuery: ((String, Item) -> Bool)? = nil,
