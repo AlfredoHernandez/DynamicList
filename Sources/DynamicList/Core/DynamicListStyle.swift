@@ -10,4 +10,5 @@ public enum DynamicListStyle {
     case inset
     case plain
     case sidebar
+    case automatic
 }

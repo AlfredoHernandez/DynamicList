@@ -14,6 +14,8 @@ extension View {
             listStyle(.inset)
         case .sidebar:
             listStyle(.sidebar)
+        case .automatic:
+            listStyle(.automatic)
         #if os(iOS)
         case .grouped:
             listStyle(.grouped)
