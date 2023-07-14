@@ -93,23 +93,41 @@ struct DynamicListView_Previews: PreviewProvider {
             sections: [
                 DynamicListSection(id: UUID(), name: "Fruits", items: []),
                 DynamicListSection(id: UUID(), name: "Ads", items: [
-                    Fruit(name: "Static Melón", symbol: "🍈", color: .orange),
+                    AnyIdentifiable(UUID(), Advertisment(text: "Advertisment: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.")),
                 ]),
             ],
-            loader: fruitsLoader.delay(for: .seconds(0.6), scheduler: DispatchQueue.main).eraseToAnyPublisher,
+            loader: fruitsLoader.map { fruits in
+                fruits.map { AnyIdentifiable(UUID(), $0) }
+            }.map {
+                [
+                    AnyIdentifiable(UUID(), Advertisment(text: "Advertisment: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."))
+                ] + $0
+            }.delay(for: .seconds(0.6), scheduler: DispatchQueue.main).eraseToAnyPublisher,
             topics: filters,
-            searchingByQuery: { query, fruit in
-                query == "" ? true : fruit.name.range(of: query, options: [.diacriticInsensitive, .caseInsensitive]) != nil
+            searchingByQuery: { (query: String, anyIdentifiable: AnyIdentifiable) in
+                query == "" ? true : (anyIdentifiable.value as! Fruit).name.range(of: query, options: [.diacriticInsensitive, .caseInsensitive]) != nil
             },
             generateRandomItemsForLoading: randomItemsGenerator,
-            itemFeedView: FruitItemView.init,
-            detailItemView: DetailFruitItemView.init,
+            itemFeedView: { item in
+                if let fruit = item.value as? Fruit {
+                    return FruitItemView(item: fruit)
+                } else if let ad = item.value as? Advertisment {
+                    return AdvertisementView(text: ad.text)
+                }
+                return EmptyView()
+            },
+            detailItemView: { item in
+                if let fruit = item.value as? Fruit {
+                    return DetailFruitItemView(item: fruit)
+                }
+                return nil
+            },
             noItemsView: {
                 NoItemsView(icon: "newspaper")
             }, errorView: {
                 LoadingErrorView(icon: "x.circle")
             },
-            config: DynamicListConfig(topicsToolbarPlacement: .principal, listStyle: .grouped)
+            config: DynamicListConfig(topicsToolbarPlacement: .principal, listStyle: .plain)
         ).onAppear {
             addMoreItemsForTesting()
         }

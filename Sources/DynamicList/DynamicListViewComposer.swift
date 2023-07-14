@@ -38,7 +38,7 @@ public class DynamicListViewComposer {
         searchingByQuery: ((String, Item) -> Bool)? = nil,
         generateRandomItemsForLoading: (() -> [Item])? = nil,
         itemFeedView: @escaping (Item) -> any View,
-        detailItemView: ((Item) -> any View)? = nil,
+        detailItemView: ((Item) -> (any View)?)? = nil,
         noItemsView: @escaping () -> any View = { NoItemsView() },
         errorView: @escaping () -> any View = { LoadingErrorView() },
         config: DynamicListConfig
