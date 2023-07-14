@@ -116,11 +116,10 @@ class DynamicListViewStore<Item>: ObservableObject {
     }
 
     private func insert(_ items: [Item], at section: Int = 0) {
-        if let mainSection = sections.first {
-            var mainSectionCopy = mainSection
-            mainSectionCopy.items = items
-            sections.remove(at: section)
-            sections.insert(mainSectionCopy, at: section)
-        }
+        guard section >= 0, section < sections.count else { return }
+        var selectedSectionCopy = sections[section]
+        selectedSectionCopy.items = items
+        sections.remove(at: section)
+        sections.insert(selectedSectionCopy, at: section)
     }
 }
