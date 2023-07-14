@@ -8,7 +8,7 @@ public struct AnyIdentifiable: Identifiable {
     public let id: AnyHashable
     public let value: Any
 
-    public init(_ id: some Hashable, _ value: some Any) {
+    public init(id: some Hashable, value: some Any) {
         self.id = AnyHashable(id)
         self.value = value
     }

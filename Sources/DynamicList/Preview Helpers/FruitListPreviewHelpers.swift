@@ -62,7 +62,7 @@ struct Advertisment: Identifiable {
 func randomItemsGenerator() -> [AnyIdentifiable] {
     var fruits: [AnyIdentifiable] = []
     for _ in 1 ... 20 {
-        let fruit = AnyIdentifiable(UUID(), Fruit(name: "Lorem ipsum", symbol: "$#", color: FruitColor.allCases.randomElement()!))
+        let fruit = AnyIdentifiable(id: UUID(), value: Fruit(name: "Lorem ipsum", symbol: "$#", color: FruitColor.allCases.randomElement()!))
         fruits.append(fruit)
     }
     return fruits
