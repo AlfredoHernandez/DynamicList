@@ -8,7 +8,7 @@ import SwiftUI
 public class DynamicListViewComposer {
     /**
      The Dynamic List UI Composer composes a dynamic list with any kind of items you provide. It requires a `loader` function to load the items from a source, such as URLSession.
-     
+
      - Parameters:
          - title: The title for the view navigation.
          - loader: A function that returns a Combine publisher that emits an array of `Items`.
@@ -19,7 +19,7 @@ public class DynamicListViewComposer {
          - detailItemView: The view used to display the detailed item.
          - noItemsView: The view used to display when no items are available in the list.
          - errorView: The view used to display when a network error occurs.
-     
+
      Example usage of the `loader` parameter where the `Item` is a `Fruit`:
      ```
      let fruitsLoader = CurrentValueSubject<[Fruit], Error>([
@@ -30,7 +30,7 @@ public class DynamicListViewComposer {
          Fruit(name: "Plátano", symbol: "🍌", color: .yellow),
      ]).eraseToAnyPublisher()
      ```
-        
+
      - Returns: The Dynamic List View.
      */
     public static func compose<Item>(
