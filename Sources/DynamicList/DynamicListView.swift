@@ -55,7 +55,7 @@ public struct DynamicListView<Item: Identifiable>: View {
                 )
                 .onChange(of: store.query, perform: { _ in loadItems() })
                 .overlay(Group {
-                    if store.items.isEmpty, store.error == nil {
+                    if let items = store.items.first?.items, items.isEmpty, store.error == nil {
                         withAnimation(.easeIn) {
                             AnyView(noItemsView())
                         }
