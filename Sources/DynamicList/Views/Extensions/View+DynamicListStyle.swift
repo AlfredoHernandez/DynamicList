@@ -10,20 +10,19 @@ extension View {
         switch type {
         case .plain:
             listStyle(.plain)
+        case .inset:
+            listStyle(.inset)
+        case .sidebar:
+            listStyle(.sidebar)
         #if os(iOS)
         case .grouped:
             listStyle(.grouped)
-        #endif
-        case .inset:
-            listStyle(.inset)
-        #if os(iOS)
         case .insetGrouped:
             listStyle(.insetGrouped)
-        #endif
-        case .sidebar:
-            listStyle(.sidebar)
+        #elseif os(macOS)
         case .insetGrouped, .grouped:
             listStyle(.automatic)
+        #endif
         }
     }
 }

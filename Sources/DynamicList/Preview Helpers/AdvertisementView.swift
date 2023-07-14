@@ -2,6 +2,8 @@
 //  Copyright © 2023 Jesús Alfredo Hernández Alarcón. All rights reserved.
 //
 
+#if DEBUG
+
 import SwiftUI
 
 struct AdvertisementView: View {
@@ -33,3 +35,5 @@ struct AdvertisementView_Previews: PreviewProvider {
         )
     }
 }
+
+#endif

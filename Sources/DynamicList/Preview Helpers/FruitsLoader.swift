@@ -2,37 +2,10 @@
 //  Copyright © 2023 Jesús Alfredo Hernández Alarcón. All rights reserved.
 //
 
-#if DEBUG
-
 import Combine
 import Foundation
-import SwiftUI
 
-enum FruitColor: CaseIterable {
-    case red
-    case yellow
-    case green
-    case orange
-    case purple
-}
-
-struct Fruit: Identifiable {
-    var id: UUID = .init()
-    let name: String
-    let symbol: String
-    let color: FruitColor
-}
-
-struct AnyIdentifiable: Identifiable {
-    let id: AnyHashable
-    let value: Any
-
-    init(_ id: some Hashable, _ value: some Any) {
-        self.id = AnyHashable(id)
-        self.value = value
-    }
-}
-
+#if DEBUG
 let fruitsLoader = CurrentValueSubject<[Fruit], Error>([
     Fruit(name: "Sandía", symbol: "🍉", color: .red),
     Fruit(name: "Pera", symbol: "🍐", color: .green),
@@ -66,36 +39,11 @@ func addMoreItemsForTesting() {
     }
 }
 
-let filters: [Topic] = [
-    Topic(name: "All", predicate: { _ in true }),
-    Topic(name: "Orange", predicate: { (item: AnyIdentifiable) in
-        if let fruit = (item.value as? Fruit) {
-            return fruit.color == .orange
-        }
-        return false
-    }),
-    Topic(name: "Red", predicate: { (item: AnyIdentifiable) in
-        if let fruit = (item.value as? Fruit) {
-            return fruit.color == .red
-        }
-        return false
-    }),
-    Topic(name: "No Items", predicate: { _ in false }),
-    Topic(name: "Error", predicate: { _ in throw NSError(domain: "test", code: 1) }),
-]
-
-struct Advertisment: Identifiable {
-    var id: UUID = .init()
-    let text: String
-}
-
-func randomItemsGenerator() -> [AnyIdentifiable] {
-    var fruits: [AnyIdentifiable] = []
-    for _ in 1 ... 20 {
-        let fruit = AnyIdentifiable(UUID(), Fruit(name: "Lorem ipsum", symbol: "$#", color: FruitColor.allCases.randomElement()!))
-        fruits.append(fruit)
+func testFruitsLoader() -> AnyPublisher<[AnyIdentifiable], Error> {
+    fruitsLoader.map { fruits in
+        fruits.map { AnyIdentifiable(UUID(), $0) }
     }
-    return fruits
+    .delay(for: .seconds(0.3), scheduler: DispatchQueue.main)
+    .eraseToAnyPublisher()
 }
-
 #endif

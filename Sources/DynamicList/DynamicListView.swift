@@ -90,22 +90,10 @@ struct DynamicListView_Previews: PreviewProvider {
     static var previews: some View {
         DynamicListViewComposer.compose(
             title: "My fruit list",
-            sections: [
-                DynamicListSection(
-                    id: UUID(),
-                    header: AdvertisementView(
-                        text: "You are using the free version, tap to unlock unlimited."
-                    ),
-                    items: []
-                ),
-            ],
-            loader: fruitsLoader.map { fruits in
-                fruits.map { AnyIdentifiable(UUID(), $0) }
-            }.delay(for: .seconds(0.6), scheduler: DispatchQueue.main).eraseToAnyPublisher,
+            sections: [defaultPreviewSection],
+            loader: testFruitsLoader,
             topics: filters,
-            searchingByQuery: { (query: String, anyIdentifiable: AnyIdentifiable) in
-                query == "" ? true : (anyIdentifiable.value as! Fruit).name.range(of: query, options: [.diacriticInsensitive, .caseInsensitive]) != nil
-            },
+            searchingByQuery: searchingByQuery(query:item:),
             generateRandomItemsForLoading: randomItemsGenerator,
             itemFeedView: { item in
                 if let fruit = item.value as? Fruit {
@@ -121,11 +109,8 @@ struct DynamicListView_Previews: PreviewProvider {
                 }
                 return nil
             },
-            noItemsView: {
-                NoItemsView(icon: "newspaper")
-            }, errorView: {
-                LoadingErrorView(icon: "x.circle")
-            },
+            noItemsView: { NoItemsView(icon: "newspaper") },
+            errorView: { LoadingErrorView(icon: "x.circle") },
             config: DynamicListConfig(topicsToolbarPlacement: .principal, listStyle: .plain)
         ).onAppear {
             addMoreItemsForTesting()
