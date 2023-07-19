@@ -8,7 +8,7 @@ public struct LoadingErrorView: View {
     let message: String
     let icon: String
 
-    public init(message: String = DynamicListPresenter.networkError, icon: String = "") {
+    public init(message: String = DynamicListPresenter.networkError, icon: String = "network.slash") {
         self.message = message
         self.icon = icon
     }
@@ -28,6 +28,6 @@ public struct LoadingErrorView: View {
 
 struct LoadingErrorView_Previews: PreviewProvider {
     static var previews: some View {
-        LoadingErrorView(icon: "network.slash")
+        LoadingErrorView()
     }
 }
