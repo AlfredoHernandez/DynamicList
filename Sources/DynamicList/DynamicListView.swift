@@ -38,6 +38,7 @@ public struct DynamicListView<Item: Identifiable>: View {
                         Section {
                             ForEach(section.items, id: \.id) { (item: Item) in
                                 listItemView(item)
+                                    .hideRowSeparator(config.hideRowSeparator)
                                     .redacted(reason: store.isLoading ? .placeholder : [])
                             }
                         } header: {
@@ -115,7 +116,11 @@ struct DynamicListView_Previews: PreviewProvider {
             },
             noItemsView: { NoItemsView(icon: "newspaper") },
             errorView: { LoadingErrorView(icon: "x.circle") },
-            config: DynamicListConfig(topicsToolbarPlacement: .principal, listStyle: .plain)
+            config: DynamicListConfig(
+                topicsToolbarPlacement: .principal,
+                listStyle: .plain,
+                hideRowSeparator: false
+            )
         ).onAppear {
             addMoreItemsForTesting()
         }

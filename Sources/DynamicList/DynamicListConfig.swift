@@ -7,9 +7,11 @@ import SwiftUI
 public struct DynamicListConfig {
     public let topicsToolbarPlacement: ToolbarItemPlacement
     public let listStyle: DynamicListStyle
+    public let hideRowSeparator: Bool
 
-    public init(topicsToolbarPlacement: ToolbarItemPlacement = .principal, listStyle: DynamicListStyle = .plain) {
+    public init(topicsToolbarPlacement: ToolbarItemPlacement = .principal, listStyle: DynamicListStyle = .plain, hideRowSeparator: Bool = false) {
         self.topicsToolbarPlacement = topicsToolbarPlacement
         self.listStyle = listStyle
+        self.hideRowSeparator = hideRowSeparator
     }
 }
