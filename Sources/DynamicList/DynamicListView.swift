@@ -82,7 +82,7 @@ public struct DynamicListView<Item: Identifiable>: View {
         .onChange(of: store.topicSelected, perform: { _ in loadItems() })
     }
 
-    private func loadItems() {
+    public func loadItems() {
         Task { await store.loadItemsAsync() }
     }
 
