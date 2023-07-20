@@ -23,8 +23,9 @@ public struct DynamicListSection<Item>: Identifiable {
 class DynamicListViewStore<Item>: ObservableObject {
     @Published var sections: [DynamicListSection<Item>]
     @Published var topicSelected: String = ""
-    @Published public private(set) var isLoading = false
+    @Published var isLoading = false
     @Published var query: String = ""
+    @Published var displayingError = false
 
     var error: Error?
     private var firstTime = true
@@ -76,6 +77,7 @@ class DynamicListViewStore<Item>: ObservableObject {
     private func loadItems(didFinishLoadingItems: @escaping () -> Void) {
         isLoading = true
         error = nil
+        displayingError = false
         loader()
             .handleEvents(receiveRequest: { [weak self] _ in
                 self?.displayingLoadingItems()
@@ -90,6 +92,7 @@ class DynamicListViewStore<Item>: ObservableObject {
                     self?.insert([], at: 0)
                     self?.isLoading = false
                     self?.error = error
+                    self?.displayingError = true
                     didFinishLoadingItems()
                 }
             } receiveValue: { [weak self] (items: [Item]) in

@@ -2,6 +2,7 @@
 //  Copyright © 2023 Jesús Alfredo Hernández Alarcón. All rights reserved.
 //
 
+import AlertToast
 import Combine
 import SwiftUI
 
@@ -80,6 +81,12 @@ public struct DynamicListView<Item: Identifiable>: View {
         }
         .onAppear(perform: loadFirstTime)
         .onChange(of: store.topicSelected, perform: { _ in loadItems() })
+        .toast(isPresenting: $store.isLoading, duration: 5.0, tapToDismiss: true) {
+            AlertToast(displayMode: .hud, type: .regular, title: DynamicListPresenter.loadingContent)
+        }
+        .toast(isPresenting: $store.displayingError, duration: 5.0, tapToDismiss: true) {
+            AlertToast(displayMode: .hud, type: .error(.red), title: DynamicListPresenter.connectivityErrorRefresh)
+        }
     }
 
     public func loadItems() {
@@ -117,7 +124,7 @@ struct DynamicListView_Previews: PreviewProvider {
             noItemsView: { NoItemsView(icon: "newspaper") },
             errorView: { LoadingErrorView(icon: "x.circle") },
             config: DynamicListConfig(
-                topicsToolbarPlacement: .principal,
+                topicsToolbarPlacement: .bottomBar,
                 listStyle: .plain,
                 hideRowSeparator: false
             )

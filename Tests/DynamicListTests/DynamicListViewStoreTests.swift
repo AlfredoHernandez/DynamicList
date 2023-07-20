@@ -47,16 +47,20 @@ final class DynamicListViewStoreTests: XCTestCase {
 
         await sut.loadItemsAsync {
             XCTAssertNil(sut.error)
+            XCTAssertFalse(sut.displayingError)
             loader.complete(with: anyNSError(), at: 0)
         }
         XCTAssertEqual(sut.error! as NSError, anyNSError())
+        XCTAssertTrue(sut.displayingError)
 
         await sut.loadItemsAsync {
             XCTAssertNil(sut.error)
+            XCTAssertFalse(sut.displayingError)
             loader.complete(with: ["a", "b", "c"], at: 1)
         }
         XCTAssertEqual(sut.sections.first?.items, ["a", "b", "c"])
         XCTAssertNil(sut.error)
+        XCTAssertFalse(sut.displayingError)
     }
 
     func test_doesNotDisplayLoadingItems_ifDisabled() async {
