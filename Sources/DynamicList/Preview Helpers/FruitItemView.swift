@@ -24,11 +24,12 @@ struct FruitItemView: View {
                     .bold()
                     .font(.title3)
                     .foregroundColor(.black)
-                Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit")
+                Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.")
+                    .lineLimit(2)
                     .font(.callout)
                     .foregroundColor(.secondary)
             }
-        }
+        }.padding(8)
     }
 }
 

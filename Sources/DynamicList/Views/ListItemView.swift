@@ -29,8 +29,8 @@ struct ListItemView<Item>: View {
                         } label: {
                             EmptyView()
                         }
+                        .padding(.trailing, 8)
                     }
-                    .padding(8)
                     .background(
                         AnyView(itemBackground())
                     )
@@ -40,7 +40,6 @@ struct ListItemView<Item>: View {
                 } label: {
                     AnyView(itemFeedView())
                 }
-                .padding(8)
                 .background(
                     AnyView(itemBackground())
                 )
@@ -48,7 +47,6 @@ struct ListItemView<Item>: View {
         } else {
             AnyView(itemFeedView())
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(8)
                 .background(
                     AnyView(itemBackground())
                 )
