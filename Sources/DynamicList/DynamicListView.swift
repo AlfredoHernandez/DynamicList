@@ -121,12 +121,25 @@ struct DynamicListView_Previews: PreviewProvider {
                 }
                 return nil
             },
+            itemBackground: {
+                if #available(iOS 15.0, *) {
+                    #if os(iOS)
+                    return RoundedRectangle(cornerSize: CGSize(width: 8, height: 8))
+                        .foregroundColor(Color(uiColor: UIColor.systemBackground))
+                        .shadow(radius: 2, x: 0, y: 0)
+                    #elseif os(macOS)
+                    return RoundedRectangle(cornerSize: CGSize(width: 8, height: 8))
+                        .shadow(radius: 2, x: 0, y: 0)
+                    #endif
+                }
+                return EmptyView()
+            },
             noItemsView: { NoItemsView(icon: "newspaper") },
             errorView: { LoadingErrorView(icon: "x.circle") },
             config: DynamicListConfig(
-                topicsToolbarPlacement: .bottomBar,
+                topicsToolbarPlacement: .principal,
                 listStyle: .plain,
-                hideRowSeparator: false
+                hideRowSeparator: true
             )
         ).onAppear {
             addMoreItemsForTesting()

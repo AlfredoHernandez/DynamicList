@@ -42,6 +42,7 @@ public class DynamicListViewComposer {
         generateRandomItemsForLoading: (() -> [Item])? = nil,
         itemFeedView: @escaping (Item) -> any View,
         detailItemView: ((Item) -> (any View)?)? = nil,
+        itemBackground: @escaping () -> any View = { EmptyView() },
         noItemsView: @escaping () -> any View = { NoItemsView() },
         errorView: @escaping () -> any View = { LoadingErrorView() },
         config: DynamicListConfig
@@ -50,9 +51,9 @@ public class DynamicListViewComposer {
             title: title,
             listItemView: { item in
                 guard let detailedItemView = detailItemView?(item) else {
-                    return ListItemView<Item>(itemFeedView: { itemFeedView(item) }, detailItemView: nil)
+                    return ListItemView<Item>(itemFeedView: { itemFeedView(item) }, detailItemView: nil, itemBackground: itemBackground)
                 }
-                return ListItemView<Item>(itemFeedView: { itemFeedView(item) }, detailItemView: { detailedItemView })
+                return ListItemView<Item>(itemFeedView: { itemFeedView(item) }, detailItemView: { detailedItemView }, itemBackground: itemBackground)
             },
             store: DynamicListViewStore<Item>(
                 sections: sections,
