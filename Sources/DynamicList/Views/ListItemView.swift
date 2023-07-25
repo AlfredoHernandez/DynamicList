@@ -9,7 +9,11 @@ struct ListItemView<Item>: View {
     let detailItemView: (() -> any View)?
     let itemBackground: () -> any View
 
-    init(itemFeedView: @escaping () -> any View, detailItemView: (() -> any View)? = nil, itemBackground: @escaping () -> any View = { EmptyView() }) {
+    init(
+        itemFeedView: @escaping () -> any View,
+        detailItemView: (() -> any View)? = nil,
+        itemBackground: @escaping () -> any View = { EmptyView() }
+    ) {
         self.itemFeedView = itemFeedView
         self.detailItemView = detailItemView
         self.itemBackground = itemBackground
@@ -17,15 +21,30 @@ struct ListItemView<Item>: View {
 
     var body: some View {
         if let detailItemView {
-            NavigationLink {
-                AnyView(detailItemView())
-            } label: {
-                AnyView(itemFeedView())
+            if #available(iOS 15, *) {
+                AnyView(itemFeedView().frame(maxWidth: .infinity, alignment: .leading))
+                    .overlay {
+                        NavigationLink {
+                            AnyView(detailItemView())
+                        } label: {
+                            EmptyView()
+                        }
+                    }
+                    .padding(8)
+                    .background(
+                        AnyView(itemBackground())
+                    )
+            } else {
+                NavigationLink {
+                    AnyView(detailItemView())
+                } label: {
+                    AnyView(itemFeedView())
+                }
+                .padding(8)
+                .background(
+                    AnyView(itemBackground())
+                )
             }
-            .padding(8)
-            .background(
-                AnyView(itemBackground())
-            )
         } else {
             AnyView(itemFeedView())
                 .frame(maxWidth: .infinity, alignment: .leading)
