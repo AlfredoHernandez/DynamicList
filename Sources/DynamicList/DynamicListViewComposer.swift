@@ -50,10 +50,12 @@ public class DynamicListViewComposer {
         DynamicListView<Item>(
             title: title,
             listItemView: { item in
-                guard let detailedItemView = detailItemView?(item) else {
-                    return ListItemView<Item>(itemFeedView: { itemFeedView(item) }, detailItemView: nil, itemBackground: itemBackground)
-                }
-                return ListItemView<Item>(itemFeedView: { itemFeedView(item) }, detailItemView: { detailedItemView }, itemBackground: itemBackground)
+                let detailItemView = detailItemView?(item)
+                return ListItemView<Item>(
+                    itemFeedView: { itemFeedView(item) },
+                    detailItemView: detailItemView != nil ? { detailItemView! } : nil,
+                    itemBackground: itemBackground
+                )
             },
             store: DynamicListViewStore<Item>(
                 sections: sections,

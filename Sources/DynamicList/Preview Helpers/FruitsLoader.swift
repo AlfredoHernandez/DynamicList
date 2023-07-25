@@ -41,7 +41,7 @@ func addMoreItemsForTesting() {
 
 func testFruitsLoader() -> AnyPublisher<[AnyIdentifiable], Error> {
     fruitsLoader.map { fruits in
-        fruits.map { AnyIdentifiable(id: UUID(), value: $0) }
+        fruits.map { AnyIdentifiable(id: $0.id, value: $0) }
     }
     .delay(for: .seconds(0.3), scheduler: DispatchQueue.main)
     .eraseToAnyPublisher()

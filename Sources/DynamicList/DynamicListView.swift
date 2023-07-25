@@ -34,40 +34,64 @@ public struct DynamicListView<Item: Identifiable>: View {
     public var body: some View {
         NavigationView {
             VStack {
-                List {
-                    ForEach(store.sections, id: \.id) { (section: DynamicListSection) in
-                        Section {
-                            ForEach(section.items, id: \.id) { (item: Item) in
-                                listItemView(item)
-                                    .hideRowSeparator(config.hideRowSeparator)
-                                    .redacted(reason: store.isLoading ? .placeholder : [])
+                ScrollViewReader { proxy in
+                    ZStack {
+                        List {
+                            ForEach(store.sections, id: \.id) { (section: DynamicListSection) in
+                                Section {
+                                    ForEach(section.items, id: \.id) { (item: Item) in
+                                        listItemView(item)
+                                            .hideRowSeparator(config.hideRowSeparator)
+                                            .redacted(reason: store.isLoading ? .placeholder : [])
+                                            .id(item.id)
+                                    }
+                                } header: {
+                                    AnyView(section.header)
+                                } footer: {
+                                    AnyView(section.footer)
+                                }
                             }
-                        } header: {
-                            AnyView(section.header)
-                        } footer: {
-                            AnyView(section.footer)
+                        }
+                        .refreshableIfAvailable { await store.loadItemsAsync() }
+                        .searchableEnabled(
+                            text: $store.query,
+                            prompt: Text(DynamicListPresenter.search),
+                            display: store.searchingByQuery != nil
+                        )
+                        .onChange(of: store.query, perform: { _ in loadItems() })
+                        .overlay(Group {
+                            if let items = store.sections.first?.items, items.isEmpty, store.error == nil {
+                                withAnimation(.easeIn) {
+                                    AnyView(noItemsView())
+                                }
+                            } else if let _ = store.error {
+                                withAnimation {
+                                    AnyView(errorView())
+                                }
+                            }
+                        })
+                        .dynamicListStyle(type: config.listStyle)
+
+                        VStack {
+                            Spacer()
+                            HStack {
+                                Spacer()
+                                Button(action: { scrollToTop(using: proxy) }) {
+                                    Image(systemName: "chevron.up")
+                                        .resizable()
+                                        .aspectRatio(contentMode: ContentMode.fit)
+                                        .padding()
+                                        .frame(width: 55, height: 55)
+                                        .foregroundColor(.white)
+                                }
+                                .background(Color.primary)
+                                .cornerRadius(60 / 2)
+                                .padding()
+                                .shadow(color: Color.black.opacity(0.6), radius: 3, x: 0, y: 0)
+                            }
                         }
                     }
                 }
-                .refreshableIfAvailable { await store.loadItemsAsync() }
-                .searchableEnabled(
-                    text: $store.query,
-                    prompt: Text(DynamicListPresenter.search),
-                    display: store.searchingByQuery != nil
-                )
-                .onChange(of: store.query, perform: { _ in loadItems() })
-                .overlay(Group {
-                    if let items = store.sections.first?.items, items.isEmpty, store.error == nil {
-                        withAnimation(.easeIn) {
-                            AnyView(noItemsView())
-                        }
-                    } else if let _ = store.error {
-                        withAnimation {
-                            AnyView(errorView())
-                        }
-                    }
-                })
-                .dynamicListStyle(type: config.listStyle)
             }
             .navigationTitle(title)
             .toolbar(content: {
@@ -95,6 +119,13 @@ public struct DynamicListView<Item: Identifiable>: View {
 
     private func loadFirstTime() {
         Task { await store.loadFirstTime() }
+    }
+
+    private func scrollToTop(using proxy: ScrollViewProxy) {
+        withAnimation {
+            let firstItemId = store.sections.first?.items.first?.id
+            proxy.scrollTo(firstItemId)
+        }
     }
 }
 
@@ -125,7 +156,7 @@ struct DynamicListView_Previews: PreviewProvider {
                 if #available(iOS 15.0, *) {
                     #if os(iOS)
                     return RoundedRectangle(cornerSize: CGSize(width: 8, height: 8))
-                        .foregroundColor(Color(uiColor: UIColor.systemBackground))
+                        .foregroundColor(Color(uiColor: UIColor.tertiarySystemBackground))
                         .shadow(radius: 2, x: 0, y: 0)
                     #elseif os(macOS)
                     return RoundedRectangle(cornerSize: CGSize(width: 8, height: 8))

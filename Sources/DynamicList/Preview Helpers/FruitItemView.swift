@@ -30,6 +30,9 @@ struct FruitItemView: View {
                 .lineLimit(2)
                 .font(.callout)
                 .foregroundColor(.secondary)
+                Divider()
+                Text(item.id.uuidString)
+                    .font(.system(size: 10))
             }
         }.padding(8)
     }
