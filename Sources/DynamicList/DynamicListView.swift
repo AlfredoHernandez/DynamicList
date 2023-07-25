@@ -72,24 +72,9 @@ public struct DynamicListView<Item: Identifiable>: View {
                         })
                         .dynamicListStyle(type: config.listStyle)
 
-                        VStack {
-                            Spacer()
-                            HStack {
-                                Spacer()
-                                Button(action: { scrollToTop(using: proxy) }) {
-                                    Image(systemName: "chevron.up")
-                                        .resizable()
-                                        .aspectRatio(contentMode: ContentMode.fit)
-                                        .padding()
-                                        .frame(width: 55, height: 55)
-                                        .foregroundColor(.white)
-                                }
-                                .background(Color.primary)
-                                .cornerRadius(60 / 2)
-                                .padding()
-                                .shadow(color: Color.black.opacity(0.6), radius: 3, x: 0, y: 0)
-                            }
-                        }
+                        FloatingActionButtonView(paddingBottom: config.paddingBottom) {
+                            scrollToTop(using: proxy)
+                        }.hiddenIf(!config.withScrollButton)
                     }
                 }
             }
@@ -170,7 +155,9 @@ struct DynamicListView_Previews: PreviewProvider {
             config: DynamicListConfig(
                 topicsToolbarPlacement: .principal,
                 listStyle: .plain,
-                hideRowSeparator: true
+                hideRowSeparator: true,
+                withScrollButton: true,
+                paddingBottom: 0
             )
         ).onAppear {
             addMoreItemsForTesting()
