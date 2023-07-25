@@ -37,7 +37,7 @@ public struct DynamicListConfig {
     public let list: ListConfig
     public let fab: FabConfig
 
-    public init(topics: TopicsConfig, list: ListConfig, fab: FabConfig) {
+    public init(topics: TopicsConfig = TopicsConfig(), list: ListConfig = ListConfig(), fab: FabConfig = FabConfig()) {
         self.topics = topics
         self.list = list
         self.fab = fab
@@ -45,5 +45,5 @@ public struct DynamicListConfig {
 }
 
 public extension DynamicListConfig {
-    static let `default` = DynamicListConfig(topics: TopicsConfig(), list: ListConfig(), fab: FabConfig())
+    static let `default` = DynamicListConfig()
 }
