@@ -41,7 +41,7 @@ public struct DynamicListView<Item: Identifiable>: View {
                                 Section {
                                     ForEach(section.items, id: \.id) { (item: Item) in
                                         listItemView(item)
-                                            .hideRowSeparator(config.hideRowSeparator)
+                                            .hideRowSeparator(config.list.hideRowSeparator)
                                             .redacted(reason: store.isLoading ? .placeholder : [])
                                             .id(item.id)
                                     }
@@ -70,17 +70,17 @@ public struct DynamicListView<Item: Identifiable>: View {
                                 }
                             }
                         })
-                        .dynamicListStyle(type: config.listStyle)
+                        .dynamicListStyle(type: config.list.style)
 
-                        FloatingActionButtonView(paddingBottom: config.paddingBottom) {
+                        FloatingActionButtonView(paddingBottom: config.fab.paddingBottom) {
                             scrollToTop(using: proxy)
-                        }.hiddenIf(!config.withScrollButton)
+                        }.hiddenIf(!config.fab.enabled)
                     }
                 }
             }
             .navigationTitle(title)
             .toolbar(content: {
-                ToolbarItem(placement: config.topicsToolbarPlacement) {
+                ToolbarItem(placement: config.topics.toolbarPlacement) {
                     TopicSegmentedView(
                         topicSelected: $store.topicSelected,
                         topics: store.topics.map(\.name)
@@ -153,11 +153,9 @@ struct DynamicListView_Previews: PreviewProvider {
             noItemsView: { NoItemsView(icon: "newspaper") },
             errorView: { LoadingErrorView(icon: "x.circle") },
             config: DynamicListConfig(
-                topicsToolbarPlacement: .principal,
-                listStyle: .plain,
-                hideRowSeparator: true,
-                withScrollButton: true,
-                paddingBottom: 0
+                topics: TopicsConfig(),
+                list: ListConfig(),
+                fab: FabConfig()
             )
         ).onAppear {
             addMoreItemsForTesting()
