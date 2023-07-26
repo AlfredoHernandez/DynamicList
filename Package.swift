@@ -12,8 +12,13 @@ let package = Package(
     products: [
         .library(name: "DynamicList", targets: ["DynamicList"]),
     ],
+    dependencies: [
+        .package(url: "https://github.com/elai950/AlertToast.git", from: "1.3.7"),
+    ],
     targets: [
-        .target(name: "DynamicList"),
+        .target(name: "DynamicList", dependencies: [
+            .product(name: "AlertToast", package: "AlertToast"),
+        ]),
         .testTarget(name: "DynamicListTests", dependencies: ["DynamicList"]),
     ]
 )

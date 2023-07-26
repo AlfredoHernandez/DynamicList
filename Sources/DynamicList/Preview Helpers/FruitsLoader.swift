@@ -2,27 +2,10 @@
 //  Copyright © 2023 Jesús Alfredo Hernández Alarcón. All rights reserved.
 //
 
-#if DEBUG
-
 import Combine
 import Foundation
-import SwiftUI
 
-enum FruitColor {
-    case red
-    case yellow
-    case green
-    case orange
-    case purple
-}
-
-struct Fruit: Identifiable {
-    var id: UUID = .init()
-    let name: String
-    let symbol: String
-    let color: FruitColor
-}
-
+#if DEBUG
 let fruitsLoader = CurrentValueSubject<[Fruit], Error>([
     Fruit(name: "Sandía", symbol: "🍉", color: .red),
     Fruit(name: "Pera", symbol: "🍐", color: .green),
@@ -56,21 +39,11 @@ func addMoreItemsForTesting() {
     }
 }
 
-let filters: [Topic] = [
-    Topic(name: "All", predicate: { _ in true }),
-    Topic(name: "Orange", predicate: { (item: Fruit) in item.color == .orange }),
-    Topic(name: "Red", predicate: { (item: Fruit) in item.color == .red }),
-    Topic(name: "No Items", predicate: { _ in false }),
-    Topic(name: "Error", predicate: { _ in throw NSError(domain: "test", code: 1) }),
-]
-
-func randomItemsGenerator() -> [Fruit] {
-    var fruits: [Fruit] = []
-    for _ in 1 ... 20 {
-        let fruit = Fruit(name: "Sandía", symbol: "🍉", color: .red)
-        fruits.append(fruit)
+func testFruitsLoader() -> AnyPublisher<[AnyIdentifiable], Error> {
+    fruitsLoader.map { fruits in
+        fruits.map { AnyIdentifiable(id: $0.id, value: $0) }
     }
-    return fruits
+    .delay(for: .seconds(0.3), scheduler: DispatchQueue.main)
+    .eraseToAnyPublisher()
 }
-
 #endif

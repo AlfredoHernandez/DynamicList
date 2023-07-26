@@ -8,7 +8,7 @@ public struct NoItemsView: View {
     let message: String
     let icon: String
 
-    public init(message: String = DynamicListPresenter.dataNotAvailable, icon: String = "") {
+    public init(message: String = DynamicListPresenter.dataNotAvailable, icon: String = "text.bubble") {
         self.message = message
         self.icon = icon
     }
@@ -27,6 +27,6 @@ public struct NoItemsView: View {
 
 struct NoItemsView_Previews: PreviewProvider {
     static var previews: some View {
-        NoItemsView(icon: "newspaper")
+        NoItemsView()
     }
 }

@@ -11,17 +11,47 @@ struct FruitItemView: View {
 
     var body: some View {
         HStack {
+            ZStack {
+                Circle()
+                    .shadow(radius: 4)
+                    .foregroundColor(item.color.toColor())
+                Text(item.symbol)
+                    .font(.system(size: 48))
+            }.frame(width: 64, height: 64)
+
             VStack(alignment: .leading, spacing: 8) {
                 Text(item.name)
                     .bold()
                     .font(.title3)
                     .foregroundColor(.black)
-                Text("Lorem ipsum dolor sit amet, consectetur adipiscing elit")
-                    .font(.callout)
-                    .foregroundColor(.secondary)
+                Text(
+                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
+                )
+                .lineLimit(2)
+                .font(.callout)
+                .foregroundColor(.secondary)
+                Divider()
+                Text(item.id.uuidString)
+                    .font(.system(size: 10))
             }
-            Text(item.symbol)
-        }.frame(maxWidth: .infinity)
+        }.padding(8)
+    }
+}
+
+extension FruitColor {
+    func toColor() -> Color {
+        switch self {
+        case FruitColor.green:
+            return Color.green
+        case FruitColor.orange:
+            return Color.orange
+        case FruitColor.purple:
+            return Color.purple
+        case FruitColor.red:
+            return Color.red
+        case FruitColor.yellow:
+            return Color.yellow
+        }
     }
 }
 

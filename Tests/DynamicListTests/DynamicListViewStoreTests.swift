@@ -14,6 +14,21 @@ final class DynamicListViewStoreTests: XCTestCase {
         XCTAssertEqual(loader.loadCallCount, 0)
     }
 
+    func test_loadFirstTime_requestLoadItems() async {
+        let loader = LoaderSpy<String>()
+        let sut = DynamicListViewStore<String>(loader: loader.publisher)
+
+        await sut.loadFirstTime {
+            loader.complete(with: ["any"], at: 0)
+        }
+        XCTAssertEqual(loader.loadCallCount, 1)
+
+        await sut.loadFirstTime {
+            loader.complete(with: ["any"], at: 1)
+        }
+        XCTAssertEqual(loader.loadCallCount, 1)
+    }
+
     func test_loadItemsAsync_displaysLoadingIndicator() async {
         let loader = LoaderSpy<String>()
         let sut = DynamicListViewStore<String>(loader: loader.publisher)
@@ -32,16 +47,20 @@ final class DynamicListViewStoreTests: XCTestCase {
 
         await sut.loadItemsAsync {
             XCTAssertNil(sut.error)
+            XCTAssertFalse(sut.displayingError)
             loader.complete(with: anyNSError(), at: 0)
         }
         XCTAssertEqual(sut.error! as NSError, anyNSError())
+        XCTAssertTrue(sut.displayingError)
 
         await sut.loadItemsAsync {
             XCTAssertNil(sut.error)
+            XCTAssertFalse(sut.displayingError)
             loader.complete(with: ["a", "b", "c"], at: 1)
         }
-        XCTAssertEqual(sut.items, ["a", "b", "c"])
+        XCTAssertEqual(sut.sections.first?.items, ["a", "b", "c"])
         XCTAssertNil(sut.error)
+        XCTAssertFalse(sut.displayingError)
     }
 
     func test_doesNotDisplayLoadingItems_ifDisabled() async {
@@ -52,7 +71,7 @@ final class DynamicListViewStoreTests: XCTestCase {
         )
 
         await sut.loadItemsAsync {
-            XCTAssertEqual(sut.items.count, 0)
+            XCTAssertEqual(sut.sections.first?.items.count, 0)
             loader.complete(with: anyNSError(), at: 0)
         }
     }
@@ -66,7 +85,7 @@ final class DynamicListViewStoreTests: XCTestCase {
         )
 
         await sut.loadItemsAsync {
-            XCTAssertEqual(sut.items.count, randomItems.count)
+            XCTAssertEqual(sut.sections.first?.items.count, randomItems.count)
             loader.complete(with: anyNSError(), at: 0)
         }
     }
@@ -83,7 +102,7 @@ final class DynamicListViewStoreTests: XCTestCase {
             loader.complete(with: items, at: 0)
         }
 
-        XCTAssertEqual(sut.items, items)
+        XCTAssertEqual(sut.sections.first?.items, items)
     }
 
     func test_filtersItemsByTopic_whenTopicsAreNotEmpty() async {
@@ -104,7 +123,7 @@ final class DynamicListViewStoreTests: XCTestCase {
             loader.complete(with: items, at: 0)
         }
 
-        XCTAssertEqual(sut.items, ["abcd", "dcba", "abba"])
+        XCTAssertEqual(sut.sections.first?.items, ["abcd", "dcba", "abba"])
     }
 
     func test_searchByQuery_returnsItemsSearchingByQuery() async {
@@ -122,7 +141,7 @@ final class DynamicListViewStoreTests: XCTestCase {
             loader.complete(with: items, at: 0)
         }
 
-        XCTAssertEqual(sut.items, ["home", "office", "todo"])
+        XCTAssertEqual(sut.sections.first?.items, ["home", "office", "todo"])
     }
 
     func test_searchByQuery_returnsAllItemsIfDisabled() async {
@@ -138,6 +157,6 @@ final class DynamicListViewStoreTests: XCTestCase {
             loader.complete(with: items, at: 0)
         }
 
-        XCTAssertEqual(sut.items, items)
+        XCTAssertEqual(sut.sections.first?.items, items)
     }
 }

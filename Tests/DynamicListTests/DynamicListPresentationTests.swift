@@ -22,6 +22,14 @@ final class DynamicListPresentationTests: XCTestCase {
         XCTAssertEqual(DynamicListPresenter.networkError, localized("network_error"))
     }
 
+    func test_loadingContent_isLocalized() throws {
+        XCTAssertEqual(DynamicListPresenter.loadingContent, localized("loading_content"))
+    }
+
+    func test_newsFeedConnectivityErrorRefresh_isLocalized() {
+        XCTAssertEqual(DynamicListPresenter.connectivityErrorRefresh, localized("connectivity_error_refresh"))
+    }
+
     // MARK: - Test helpers
 
     private func localized(_ key: String, param: CVarArg? = nil, table: String = "Localizable", file: StaticString = #filePath, line: UInt = #line) -> String {
