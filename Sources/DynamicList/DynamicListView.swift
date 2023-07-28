@@ -114,6 +114,7 @@ public struct DynamicListView<Item: Identifiable>: View {
     }
 }
 
+#if DEBUG
 struct DynamicListView_Previews: PreviewProvider {
     static var previews: some View {
         DynamicListViewComposer.compose(
@@ -162,3 +163,4 @@ struct DynamicListView_Previews: PreviewProvider {
         }
     }
 }
+#endif
