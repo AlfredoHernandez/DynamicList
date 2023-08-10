@@ -42,8 +42,10 @@ struct FloatingActionButtonView: View {
     }
 }
 
+#if DEBUG
 struct FloatingActionButtonView_Previews: PreviewProvider {
     static var previews: some View {
         FloatingActionButtonView(action: {})
     }
 }
+#endif

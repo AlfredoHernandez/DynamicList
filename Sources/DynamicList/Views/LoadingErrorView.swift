@@ -26,8 +26,10 @@ public struct LoadingErrorView: View {
     }
 }
 
+#if DEBUG
 struct LoadingErrorView_Previews: PreviewProvider {
     static var previews: some View {
         LoadingErrorView()
     }
 }
+#endif

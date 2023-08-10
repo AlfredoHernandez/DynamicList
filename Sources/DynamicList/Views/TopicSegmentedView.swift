@@ -21,6 +21,7 @@ struct TopicSegmentedView: View {
     }
 }
 
+#if DEBUG
 struct TopicSegmentedView_Previews: PreviewProvider {
     static var previews: some View {
         TopicSegmentedView(
@@ -29,3 +30,4 @@ struct TopicSegmentedView_Previews: PreviewProvider {
         )
     }
 }
+#endif
