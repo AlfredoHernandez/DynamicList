@@ -88,9 +88,12 @@ public struct DynamicListView<Item: Identifiable>: View {
                 }
             })
         }
+        #if os(iOS)
+        .navigationViewStyleColumn()
+        #endif
         .onAppear(perform: loadFirstTime)
         .onChange(of: store.topicSelected, perform: { _ in loadItems() })
-        .toast(isPresenting: $store.isLoading, duration: 5.0, tapToDismiss: true) {
+        .toast(isPresenting: $store.isLoading, duration: 100.0, tapToDismiss: false) {
             AlertToast(displayMode: .hud, type: .regular, title: DynamicListPresenter.loadingContent)
         }
         .toast(isPresenting: $store.displayingError, duration: 5.0, tapToDismiss: true) {
@@ -155,7 +158,7 @@ struct DynamicListView_Previews: PreviewProvider {
             errorView: { LoadingErrorView(icon: "x.circle") },
             config: DynamicListConfig(
                 topics: TopicsConfig(),
-                list: ListConfig(),
+                list: ListConfig(style: .inset),
                 fab: FabConfig()
             )
         ).onAppear {

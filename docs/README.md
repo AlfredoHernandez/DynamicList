@@ -9,6 +9,8 @@ A SwiftUI generic list to load, refresh and display details for any items
 
 [![Swift](https://github.com/AlfredoHernandez/DynamicList/actions/workflows/swift.yml/badge.svg?branch=main)](https://github.com/AlfredoHernandez/DynamicList/actions/workflows/swift.yml)
 
+![Dynamic List](./dynamic-list.png)
+
 Works on:
 - iOS 14+
 - macOS 12+
