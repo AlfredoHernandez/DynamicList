@@ -24,6 +24,7 @@ class DynamicListViewStore<Item>: ObservableObject {
     @Published var sections: [DynamicListSection<Item>]
     @Published var topicSelected: String = ""
     @Published var isLoading = false
+    @Published var showLoadingAlert = false
     @Published var query: String = ""
     @Published var displayingError = false
     private let testingMode: Bool
@@ -87,6 +88,7 @@ class DynamicListViewStore<Item>: ObservableObject {
 
     private func loadItems(didFinishLoadingItems: (() -> Void)? = nil) {
         isLoading = true
+        showLoadingAlert = true
         error = nil
         displayingError = false
         loader()
@@ -102,6 +104,7 @@ class DynamicListViewStore<Item>: ObservableObject {
                 if case let .failure(error) = completion {
                     self?.insert([], at: 0)
                     self?.isLoading = false
+                    self?.showLoadingAlert = false
                     self?.error = error
                     self?.displayingError = true
                     didFinishLoadingItems?()
@@ -110,6 +113,7 @@ class DynamicListViewStore<Item>: ObservableObject {
                 self?.insert(items, at: 0)
                 withAnimation(.default) {
                     self?.isLoading = false
+                    self?.showLoadingAlert = false
                 }
                 didFinishLoadingItems?()
             }
