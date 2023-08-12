@@ -58,7 +58,6 @@ public struct DynamicListView<Item: Identifiable>: View {
                             prompt: Text(DynamicListPresenter.search),
                             display: store.searchingByQuery != nil
                         )
-                        .onChange(of: store.query, perform: { _ in loadItems() })
                         .overlay(Group {
                             if let items = store.sections.first?.items, items.isEmpty, store.error == nil {
                                 withAnimation(.easeIn) {

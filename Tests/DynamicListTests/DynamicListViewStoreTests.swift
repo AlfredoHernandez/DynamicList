@@ -125,6 +125,21 @@ final class DynamicListViewStoreTests: XCTestCase {
 
         XCTAssertEqual(sut.sections.first?.items, ["abcd", "dcba", "abba"])
     }
+    
+    func test_searchByQuery_requestLoadItems() {
+        let loader = LoaderSpy<String>()
+        let sut = DynamicListViewStore<String>(
+            searchingByQuery: { query, item in
+                query == "" ? true : item.range(of: query, options: [.diacriticInsensitive, .caseInsensitive]) != nil
+            },
+            loader: loader.publisher,
+            testingMode: true
+        )
+        XCTAssertEqual(loader.loadCallCount, 0)
+
+        sut.query = "o"
+        XCTAssertEqual(loader.loadCallCount, 1)
+    }
 
     func test_searchByQuery_returnsItemsSearchingByQuery() async {
         let items = ["home", "office", "test", "todo", "fix"]
@@ -133,14 +148,13 @@ final class DynamicListViewStoreTests: XCTestCase {
             searchingByQuery: { query, item in
                 query == "" ? true : item.range(of: query, options: [.diacriticInsensitive, .caseInsensitive]) != nil
             },
-            loader: loader.publisher
+            loader: loader.publisher,
+            testingMode: true
         )
-
+        
         sut.query = "o"
-        await sut.loadItemsAsync {
-            loader.complete(with: items, at: 0)
-        }
-
+        loader.complete(with: items, at: 0)
+        
         XCTAssertEqual(sut.sections.first?.items, ["home", "office", "todo"])
     }
 
@@ -149,13 +163,12 @@ final class DynamicListViewStoreTests: XCTestCase {
         let loader = LoaderSpy<String>()
         let sut = DynamicListViewStore<String>(
             searchingByQuery: nil,
-            loader: loader.publisher
+            loader: loader.publisher,
+            testingMode: true
         )
 
         sut.query = "any query"
-        await sut.loadItemsAsync {
-            loader.complete(with: items, at: 0)
-        }
+        loader.complete(with: items, at: 0)
 
         XCTAssertEqual(sut.sections.first?.items, items)
     }
