@@ -26,6 +26,7 @@ class DynamicListViewStore<Item>: ObservableObject {
     @Published var isLoading = false
     @Published var query: String = ""
     @Published var displayingError = false
+    private let testingMode: Bool
 
     var error: Error?
     private var firstTime = true
@@ -41,17 +42,27 @@ class DynamicListViewStore<Item>: ObservableObject {
         topics: [Topic<Item>] = [],
         searchingByQuery: ((String, Item) -> Bool)? = nil,
         generateRandomItemsForLoading: (() -> [Item])? = nil,
-        loader: @escaping () -> AnyPublisher<[Item], Error>
+        loader: @escaping () -> AnyPublisher<[Item], Error>,
+        testingMode: Bool = false
     ) {
         self.sections = sections
         self.topics = topics
         self.searchingByQuery = searchingByQuery
         self.generateRandomItemsForLoading = generateRandomItemsForLoading
         self.loader = loader
+        self.testingMode = testingMode
 
         if let firstTopic = topics.first {
             topicSelected = firstTopic.name
         }
+        
+        $query
+            .dropFirst()
+            .debounceIfTesting(testingMode)
+            .sink { [weak self] _ in
+                self?.loadItems()
+            }
+            .store(in: &cancellables)
     }
 
     func loadFirstTime(_ action: (() -> Void)? = nil) async {
@@ -64,7 +75,7 @@ class DynamicListViewStore<Item>: ObservableObject {
     func loadItemsAsync(_ action: (() -> Void)? = nil) async {
         var finished = false
         await withCheckedContinuation { continuation in
-            loadItems {
+            loadItems() {
                 if !finished {
                     finished = true
                     continuation.resume()
@@ -74,7 +85,7 @@ class DynamicListViewStore<Item>: ObservableObject {
         }
     }
 
-    private func loadItems(didFinishLoadingItems: @escaping () -> Void) {
+    private func loadItems(didFinishLoadingItems: (() -> Void)? = nil) {
         isLoading = true
         error = nil
         displayingError = false
@@ -93,14 +104,14 @@ class DynamicListViewStore<Item>: ObservableObject {
                     self?.isLoading = false
                     self?.error = error
                     self?.displayingError = true
-                    didFinishLoadingItems()
+                    didFinishLoadingItems?()
                 }
             } receiveValue: { [weak self] (items: [Item]) in
                 self?.insert(items, at: 0)
                 withAnimation(.default) {
                     self?.isLoading = false
                 }
-                didFinishLoadingItems()
+                didFinishLoadingItems?()
             }
             .store(in: &cancellables)
     }
@@ -124,5 +135,15 @@ class DynamicListViewStore<Item>: ObservableObject {
         selectedSectionCopy.items = items
         sections.remove(at: section)
         sections.insert(selectedSectionCopy, at: section)
+    }
+}
+
+extension Publisher {
+    func debounceIfTesting(_ testing: Bool) -> AnyPublisher<Output, Failure> {
+        if !testing {
+            return debounce(for: .seconds(0.5), scheduler: DispatchQueue.global(qos: .userInitiated))
+                .eraseToAnyPublisher()
+        }
+        return eraseToAnyPublisher()
     }
 }
