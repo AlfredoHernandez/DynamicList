@@ -43,6 +43,7 @@ public struct DynamicListView<Item: Identifiable>: View {
                                         listItemView(item)
                                             .hideRowSeparator(config.list.hideRowSeparator)
                                             .redacted(reason: store.isLoading ? .placeholder : [])
+                                            .disabled(store.isLoading)
                                             .id(item.id)
                                     }
                                 } header: {
