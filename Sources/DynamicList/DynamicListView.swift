@@ -43,6 +43,7 @@ public struct DynamicListView<Item: Identifiable>: View {
                                         listItemView(item)
                                             .hideRowSeparator(config.list.hideRowSeparator)
                                             .redacted(reason: store.isLoading ? .placeholder : [])
+                                            .disabled(store.isLoading)
                                             .id(item.id)
                                     }
                                 } header: {
@@ -58,7 +59,6 @@ public struct DynamicListView<Item: Identifiable>: View {
                             prompt: Text(DynamicListPresenter.search),
                             display: store.searchingByQuery != nil
                         )
-                        .onChange(of: store.query, perform: { _ in loadItems() })
                         .overlay(Group {
                             if let items = store.sections.first?.items, items.isEmpty, store.error == nil {
                                 withAnimation(.easeIn) {
@@ -88,9 +88,12 @@ public struct DynamicListView<Item: Identifiable>: View {
                 }
             })
         }
+        #if os(iOS)
+        .navigationViewStyleColumn()
+        #endif
         .onAppear(perform: loadFirstTime)
         .onChange(of: store.topicSelected, perform: { _ in loadItems() })
-        .toast(isPresenting: $store.isLoading, duration: 5.0, tapToDismiss: true) {
+        .toast(isPresenting: $store.showLoadingAlert, duration: .infinity, tapToDismiss: false) {
             AlertToast(displayMode: .hud, type: .regular, title: DynamicListPresenter.loadingContent)
         }
         .toast(isPresenting: $store.displayingError, duration: 5.0, tapToDismiss: true) {
@@ -155,7 +158,7 @@ struct DynamicListView_Previews: PreviewProvider {
             errorView: { LoadingErrorView(icon: "x.circle") },
             config: DynamicListConfig(
                 topics: TopicsConfig(),
-                list: ListConfig(),
+                list: ListConfig(style: .inset),
                 fab: FabConfig()
             )
         ).onAppear {
