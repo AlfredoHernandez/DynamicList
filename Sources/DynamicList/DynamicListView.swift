@@ -43,6 +43,7 @@ public struct DynamicListView<Item: Identifiable>: View {
                                         listItemView(item)
                                             .hideRowSeparator(config.list.hideRowSeparator)
                                             .redacted(reason: store.isLoading ? .placeholder : [])
+                                            .disabled(store.isLoading)
                                             .id(item.id)
                                     }
                                 } header: {
@@ -92,7 +93,7 @@ public struct DynamicListView<Item: Identifiable>: View {
         #endif
         .onAppear(perform: loadFirstTime)
         .onChange(of: store.topicSelected, perform: { _ in loadItems() })
-        .toast(isPresenting: $store.isLoading, duration: 100.0, tapToDismiss: false) {
+        .toast(isPresenting: $store.showLoadingAlert, duration: .infinity, tapToDismiss: false) {
             AlertToast(displayMode: .hud, type: .regular, title: DynamicListPresenter.loadingContent)
         }
         .toast(isPresenting: $store.displayingError, duration: 5.0, tapToDismiss: true) {
