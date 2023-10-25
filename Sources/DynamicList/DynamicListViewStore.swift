@@ -59,7 +59,7 @@ class DynamicListViewStore<Item>: ObservableObject {
         
         $query
             .dropFirst()
-            .debounceIfTesting(testingMode)
+            .debounceIfNotTesting(testingMode)
             .sink { [weak self] _ in
                 self?.loadItems()
             }
@@ -75,6 +75,9 @@ class DynamicListViewStore<Item>: ObservableObject {
 
     func loadItemsAsync(_ action: (() -> Void)? = nil) async {
         var finished = false
+        await MainActor.run { [weak self] in
+            self?.updateUIWhileLoadingItems()
+        }
         await withCheckedContinuation { continuation in
             loadItems() {
                 if !finished {
@@ -86,15 +89,17 @@ class DynamicListViewStore<Item>: ObservableObject {
         }
     }
 
-    private func loadItems(didFinishLoadingItems: (() -> Void)? = nil) {
+    private func updateUIWhileLoadingItems() {
         isLoading = true
         showLoadingAlert = true
-        error = nil
         displayingError = false
+        error = nil
+        
+        displayingLoadingItems()
+    }
+    
+    private func loadItems(didFinishLoadingItems: (() -> Void)? = nil) {
         loader()
-            .handleEvents(receiveRequest: { [weak self] _ in
-                self?.displayingLoadingItems()
-            })
             .tryMap(filteringItems)
             .tryMap { [weak self] items in
                 guard let self, let searchingByQuery else { return items }
@@ -143,7 +148,7 @@ class DynamicListViewStore<Item>: ObservableObject {
 }
 
 extension Publisher {
-    func debounceIfTesting(_ testing: Bool) -> AnyPublisher<Output, Failure> {
+    func debounceIfNotTesting(_ testing: Bool) -> AnyPublisher<Output, Failure> {
         if !testing {
             return debounce(for: .seconds(0.5), scheduler: DispatchQueue.global(qos: .userInitiated))
                 .eraseToAnyPublisher()
