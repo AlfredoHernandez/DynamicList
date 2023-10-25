@@ -154,7 +154,7 @@ final class DynamicListViewStoreTests: XCTestCase {
         
         sut.query = "o"
         loader.complete(with: items, at: 0)
-        
+
         XCTAssertEqual(sut.sections.first?.items, ["home", "office", "todo"])
     }
 
