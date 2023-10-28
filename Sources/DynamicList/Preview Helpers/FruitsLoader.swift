@@ -43,7 +43,7 @@ func testFruitsLoader() -> AnyPublisher<[AnyIdentifiable], Error> {
     fruitsLoader.map { fruits in
         fruits.map { AnyIdentifiable(id: $0.id, value: $0) }
     }
-    .subscribe(on: DispatchQueue.global(qos: .userInitiated))
+    .subscribe(on: DispatchQueue.global(qos: .background))
     .receive(on: DispatchQueue.main)
     .delay(for: .seconds(0.3), scheduler: DispatchQueue.main)
     .eraseToAnyPublisher()
