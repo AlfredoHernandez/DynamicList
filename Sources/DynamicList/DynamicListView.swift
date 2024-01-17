@@ -9,6 +9,14 @@ import SwiftUI
 public struct DynamicListView<Item: Identifiable>: View {
     @ObservedObject var store: DynamicListViewStore<Item>
 
+    public var sections: Int {
+        store.sections.count
+    }
+
+    public func items(in section: Int) -> [Item] {
+        store.sections[section].items
+    }
+
     let title: String
     let listItemView: (Item) -> ListItemView<Item>
     let noItemsView: () -> any View
