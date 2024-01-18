@@ -32,15 +32,25 @@ public struct FabConfig {
     }
 }
 
+public struct Lifecycle {
+    public let onAppear: (() -> Void)?
+    
+    public init(onAppear: (() -> Void)? = nil) {
+        self.onAppear = onAppear
+    }
+}
+
 public struct DynamicListConfig {
     public let topics: TopicsConfig
     public let list: ListConfig
     public let fab: FabConfig
+    public let lifecycle: Lifecycle
 
-    public init(topics: TopicsConfig = TopicsConfig(), list: ListConfig = ListConfig(), fab: FabConfig = FabConfig()) {
+    public init(topics: TopicsConfig = TopicsConfig(), list: ListConfig = ListConfig(), fab: FabConfig = FabConfig(), lifecycle: Lifecycle = Lifecycle()) {
         self.topics = topics
         self.list = list
         self.fab = fab
+        self.lifecycle = lifecycle
     }
 }
 

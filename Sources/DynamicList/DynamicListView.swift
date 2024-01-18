@@ -98,6 +98,7 @@ public struct DynamicListView<Item: Identifiable>: View {
         .navigationViewStyleColumn()
         #endif
         .onAppear(perform: loadFirstTime)
+        .onAppear(perform: config.lifecycle.onAppear)
         .onChange(of: store.topicSelected, perform: { _ in loadItems() })
         .toast(isPresenting: $store.showLoadingAlert, duration: .infinity, tapToDismiss: false) {
             AlertToast(displayMode: .hud, type: .regular, title: DynamicListPresenter.loadingContent)
@@ -166,11 +167,10 @@ struct DynamicListView_Previews: PreviewProvider {
                 config: DynamicListConfig(
                     topics: TopicsConfig(),
                     list: ListConfig(style: .inset),
-                    fab: FabConfig()
+                    fab: FabConfig(),
+                    lifecycle: Lifecycle(onAppear: addMoreItemsForTesting)
                 )
-            ).onAppear {
-                addMoreItemsForTesting()
-            }
+            )
         }
     }
 }
