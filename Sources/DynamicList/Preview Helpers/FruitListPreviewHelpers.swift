@@ -16,7 +16,7 @@ enum FruitColor: CaseIterable {
     case purple
 }
 
-struct Fruit: Identifiable {
+struct Fruit: Identifiable, Hashable {
     var id: UUID = .init()
     let name: String
     let symbol: String
