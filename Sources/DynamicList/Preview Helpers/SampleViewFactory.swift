@@ -14,12 +14,25 @@ func sampleViewFactory(route: Route<some Identifiable & Hashable>) -> any View {
                 DetailFruitItemView(item: item.value as! Fruit)
             default:
                 Text("Unknown any identifiable item: \(item)")
-                    .bold()
             }
 
         default:
-            Text("Unknown view: \(route)")
-                .bold()
+            Text("Unknown view: \(route)").bold()
+        }
+
+    case let .preview(item):
+        switch item as? AnyIdentifiable {
+        case let .some(item):
+            switch item.value {
+            case is Fruit:
+                DetailPreviewFruitItemView(item: item.value as! Fruit)
+            default:
+                Text("Unknown preview any identifiable item: \(item)")
+            }
+
+        default:
+            Text("Unknown preview: \(route)").bold()
         }
     }
 }
+

@@ -6,8 +6,13 @@ import Foundation
 
 final class NavigationRouter<Item: Identifiable & Hashable>: ObservableObject {
     @Published var routes = [Route<Item>]()
+    
+    func push(_ route: Route<Item>) {
+        routes.append(route)
+    }
 }
 
 public enum Route<Item: Identifiable & Hashable>: Hashable {
     case detail(forItem: Item)
+    case preview(Item)
 }

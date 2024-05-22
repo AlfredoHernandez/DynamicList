@@ -34,7 +34,16 @@ public struct DynamicListStackView<Item: Identifiable & Hashable>: View {
         self.errorView = errorView
         self.config = config
     }
-
+    
+    @ViewBuilder
+    private func ItemView(_ item: Item) -> some View {
+        AnyView(listItemView(item))
+            .hideRowSeparator(config.list.hideRowSeparator)
+            .redacted(reason: store.isLoading ? .placeholder : [])
+            .disabled(store.isLoading)
+            .id(item.id)
+    }
+    
     public var body: some View {
         NavigationStack(path: $routerManager.routes) {
             List {
@@ -42,12 +51,15 @@ public struct DynamicListStackView<Item: Identifiable & Hashable>: View {
                     Section {
                         ForEach(section.items, id: \.id) { (item: Item) in
                             NavigationLink(value: Route<Item>.detail(forItem: item)) {
-                                AnyView(listItemView(item))
-                                    .hideRowSeparator(config.list.hideRowSeparator)
-                                    .redacted(reason: store.isLoading ? .placeholder : [])
-                                    .disabled(store.isLoading)
-                                    .id(item.id)
+                                ItemView(item)
                             }
+                            .contextMenu(menuItems: {
+                                NavigationLink(value: Route<Item>.detail(forItem: item)) {
+                                    Text("More...")
+                                }
+                            }, preview: {
+                                AnyView(viewFactory(.preview(item)))
+                            })
                         }
                     } header: {
                         AnyView(section.header)
