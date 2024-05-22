@@ -20,8 +20,8 @@ public class DynamicListStackViewComposer {
         itemFeedView: @escaping (Item) -> any View,
         viewFactory: @escaping (Route<Item>) -> any View,
         itemBackground _: @escaping () -> any View = { EmptyView() },
-        noItemsView _: @escaping () -> any View = { NoItemsView() },
-        errorView _: @escaping () -> any View = { LoadingErrorView() },
+        noItemsView: @escaping () -> any View = { NoItemsView() },
+        errorView: @escaping () -> any View = { LoadingErrorView() },
         config: DynamicListConfig
     ) -> DynamicListStackView<Item> {
         DynamicListStackView<Item>(
@@ -35,6 +35,8 @@ public class DynamicListStackViewComposer {
             ),
             listItemView: itemFeedView,
             viewFactory: viewFactory,
+            noItemsView: noItemsView,
+            errorView: errorView,
             config: config
         )
     }

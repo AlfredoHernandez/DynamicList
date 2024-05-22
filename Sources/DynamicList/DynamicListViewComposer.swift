@@ -5,6 +5,7 @@
 import Combine
 import SwiftUI
 
+@available(*, deprecated, message: "This type will be deprecated in future versions. Please use `DynamicListStackView` instead.")
 public class DynamicListViewComposer {
     /**
      The Dynamic List UI Composer composes a dynamic list with any kind of items you provide. It requires a `loader` function to load the items from a source, such as URLSession.
