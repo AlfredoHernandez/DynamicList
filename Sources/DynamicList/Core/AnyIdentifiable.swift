@@ -1,5 +1,5 @@
 //
-//  Copyright © 2023 Jesús Alfredo Hernández Alarcón. All rights reserved.
+//  Copyright © 2024 Jesús Alfredo Hernández Alarcón. All rights reserved.
 //
 
 import Foundation
@@ -12,11 +12,11 @@ public struct AnyIdentifiable: Identifiable, Hashable {
         self.id = AnyHashable(id)
         self.value = value
     }
-    
+
     public static func == (lhs: AnyIdentifiable, rhs: AnyIdentifiable) -> Bool {
         lhs.id == rhs.id
     }
-    
+
     public func hash(into hasher: inout Hasher) {
         hasher.combine(hashValue)
     }

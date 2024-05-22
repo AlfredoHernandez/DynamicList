@@ -1,5 +1,5 @@
 //
-//  Copyright © 2023 Jesús Alfredo Hernández Alarcón. All rights reserved.
+//  Copyright © 2024 Jesús Alfredo Hernández Alarcón. All rights reserved.
 //
 
 import Foundation

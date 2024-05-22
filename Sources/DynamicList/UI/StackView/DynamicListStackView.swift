@@ -1,9 +1,9 @@
 //
-//  Created by Jesús Alfredo Hernández Alarcón on 21/05/24.
+//  Copyright © 2024 Jesús Alfredo Hernández Alarcón. All rights reserved.
 //
 
-import SwiftUI
 import AlertToast
+import SwiftUI
 
 @available(iOS 16.0, *)
 public struct DynamicListStackView<Item: Identifiable & Hashable>: View {
@@ -101,7 +101,7 @@ public struct DynamicListStackView<Item: Identifiable & Hashable>: View {
     private func loadFirstTime() {
         Task { await store.loadFirstTime() }
     }
-    
+
     public func loadItems() {
         Task { await store.loadItemsAsync() }
     }

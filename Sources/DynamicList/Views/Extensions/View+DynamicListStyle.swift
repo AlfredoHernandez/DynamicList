@@ -1,5 +1,5 @@
 //
-//  Copyright © 2023 Jesús Alfredo Hernández Alarcón. All rights reserved.
+//  Copyright © 2024 Jesús Alfredo Hernández Alarcón. All rights reserved.
 //
 
 import SwiftUI
@@ -27,7 +27,7 @@ extension View {
         #endif
         }
     }
-    
+
     @ViewBuilder
     func navigationViewStyleColumn() -> some View {
         if #available(iOS 15.0, *) {

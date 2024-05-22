@@ -1,5 +1,5 @@
 //
-//  Copyright © 2023 Jesús Alfredo Hernández Alarcón. All rights reserved.
+//  Copyright © 2024 Jesús Alfredo Hernández Alarcón. All rights reserved.
 //
 
 import Combine
@@ -56,7 +56,7 @@ class DynamicListViewStore<Item>: ObservableObject {
         if let firstTopic = topics.first {
             topicSelected = firstTopic.name
         }
-        
+
         $query
             .dropFirst()
             .debounceIfNotTesting(testingMode)
@@ -79,7 +79,7 @@ class DynamicListViewStore<Item>: ObservableObject {
             self?.updateUIWhileLoadingItems()
         }
         await withCheckedContinuation { continuation in
-            loadItems() {
+            loadItems {
                 if !finished {
                     finished = true
                     continuation.resume()
@@ -94,10 +94,10 @@ class DynamicListViewStore<Item>: ObservableObject {
         showLoadingAlert = true
         displayingError = false
         error = nil
-        
+
         displayingLoadingItems()
     }
-    
+
     private func loadItems(didFinishLoadingItems: (() -> Void)? = nil) {
         loader()
             .tryMap(filteringItems)

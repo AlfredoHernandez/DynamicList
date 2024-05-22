@@ -1,8 +1,5 @@
 //
-//  File.swift
-//  
-//
-//  Created by Jesús Alfredo Hernández Alarcón on 21/05/24.
+//  Copyright © 2024 Jesús Alfredo Hernández Alarcón. All rights reserved.
 //
 
 import Foundation

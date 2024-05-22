@@ -1,5 +1,5 @@
 //
-//  Copyright © 2023 Jesús Alfredo Hernández Alarcón. All rights reserved.
+//  Copyright © 2024 Jesús Alfredo Hernández Alarcón. All rights reserved.
 //
 
 import SwiftUI
@@ -34,7 +34,7 @@ public struct FabConfig {
 
 public struct Lifecycle {
     public let onAppear: (() -> Void)?
-    
+
     public init(onAppear: (() -> Void)? = nil) {
         self.onAppear = onAppear
     }

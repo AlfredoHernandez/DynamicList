@@ -1,5 +1,5 @@
 //
-//  Copyright © 2023 Jesús Alfredo Hernández Alarcón. All rights reserved.
+//  Copyright © 2024 Jesús Alfredo Hernández Alarcón. All rights reserved.
 //
 
 @testable import DynamicList
@@ -125,7 +125,7 @@ final class DynamicListViewStoreTests: XCTestCase {
 
         XCTAssertEqual(sut.sections.first?.items, ["abcd", "dcba", "abba"])
     }
-    
+
     func test_searchByQuery_requestLoadItems() {
         let loader = LoaderSpy<String>()
         let sut = DynamicListViewStore<String>(
@@ -151,7 +151,7 @@ final class DynamicListViewStoreTests: XCTestCase {
             loader: loader.publisher,
             testingMode: true
         )
-        
+
         sut.query = "o"
         loader.complete(with: items, at: 0)
 
