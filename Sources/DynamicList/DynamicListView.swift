@@ -60,7 +60,9 @@ public struct DynamicListView<Item: Identifiable>: View {
                             }
                         }
                     }
-                    .refreshableIfAvailable { await store.loadItemsAsync() }
+                    .refreshableIfAvailable {
+                        await store.loadItemsAsync()
+                    }
                     .searchableEnabled(
                         text: $store.query,
                         prompt: Text(DynamicListPresenter.search),
@@ -81,7 +83,8 @@ public struct DynamicListView<Item: Identifiable>: View {
 
                     FloatingActionButtonView(paddingBottom: config.fab.paddingBottom) {
                         scrollToTop(using: proxy)
-                    }.hiddenIf(!config.fab.enabled)
+                    }
+                    .hiddenIf(!config.fab.enabled)
                 }
             }
         }
@@ -99,7 +102,7 @@ public struct DynamicListView<Item: Identifiable>: View {
         #endif
         .onAppear(perform: loadFirstTime)
         .onAppear(perform: config.lifecycle.onAppear)
-        .onChange(of: store.topicSelected, perform: { _ in loadItems() })
+        .onChange(of: store.topicSelected, loadItems)
         .toast(isPresenting: $store.showLoadingAlert, duration: .infinity, tapToDismiss: false) {
             AlertToast(displayMode: .hud, type: .regular, title: DynamicListPresenter.loadingContent)
         }
@@ -124,54 +127,54 @@ public struct DynamicListView<Item: Identifiable>: View {
     }
 }
 
-#if DEBUG
-struct DynamicListView_Previews: PreviewProvider {
-    static var previews: some View {
-        NavigationView {
-            DynamicListViewComposer.compose(
-                title: "My fruit list",
-                sections: [defaultPreviewSection],
-                loader: testFruitsLoader,
-                topics: filters,
-                searchingByQuery: searchingByQuery(query:item:),
-                generateRandomItemsForLoading: randomItemsGenerator,
-                itemFeedView: { item in
-                    if let fruit = item.value as? Fruit {
-                        return FruitItemView(item: fruit)
-                    } else if let ad = item.value as? Advertisment {
-                        return AdvertisementView(text: ad.text)
-                    }
-                    return EmptyView()
-                },
-                detailItemView: { item in
-                    if let fruit = item.value as? Fruit {
-                        return DetailFruitItemView(item: fruit)
-                    }
-                    return nil
-                },
-                itemBackground: {
-                    if #available(iOS 15.0, *) {
-                        #if os(iOS)
-                        return RoundedRectangle(cornerSize: CGSize(width: 8, height: 8))
-                            .foregroundColor(Color(uiColor: UIColor.tertiarySystemBackground))
-                            .shadow(radius: 2, x: 0, y: 0)
-                        #elseif os(macOS)
-                        return RoundedRectangle(cornerSize: CGSize(width: 8, height: 8))
-                            .shadow(radius: 2, x: 0, y: 0)
-                        #endif
-                    }
-                    return EmptyView()
-                },
-                noItemsView: { NoItemsView(icon: "newspaper") },
-                errorView: { LoadingErrorView(icon: "x.circle") },
-                config: DynamicListConfig(
-                    topics: TopicsConfig(),
-                    list: ListConfig(style: .inset),
-                    fab: FabConfig(),
-                    lifecycle: Lifecycle(onAppear: addMoreItemsForTesting)
-                )
+#Preview {
+    NavigationView {
+        DynamicListViewComposer.compose(
+            title: "My fruit list",
+            sections: [defaultPreviewSection],
+            loader: testFruitsLoader,
+            topics: filters,
+            searchingByQuery: searchingByQuery(query:item:),
+            generateRandomItemsForLoading: randomItemsGenerator,
+            itemFeedView: { item in
+                if let fruit = item.value as? Fruit {
+                    return FruitItemView(item: fruit)
+                } else if let ad = item.value as? Advertisment {
+                    return AdvertisementView(text: ad.text)
+                }
+                return EmptyView()
+            },
+            detailItemView: { item in
+                if let fruit = item.value as? Fruit {
+                    return DetailFruitItemView(item: fruit)
+                }
+                return nil
+            },
+            itemBackground: {
+                if #available(iOS 15.0, *) {
+                    #if os(iOS)
+                    return RoundedRectangle(cornerSize: CGSize(width: 8, height: 8))
+                        .foregroundColor(Color(uiColor: UIColor.tertiarySystemBackground))
+                        .shadow(radius: 2, x: 0, y: 0)
+                    #elseif os(macOS)
+                    return RoundedRectangle(cornerSize: CGSize(width: 8, height: 8))
+                        .shadow(radius: 2, x: 0, y: 0)
+                    #endif
+                }
+                return EmptyView()
+            },
+            noItemsView: {
+                NoItemsView(icon: "newspaper")
+            },
+            errorView: {
+                LoadingErrorView(icon: "x.circle")
+            },
+            config: DynamicListConfig(
+                topics: TopicsConfig(),
+                list: ListConfig(style: .inset),
+                fab: FabConfig(),
+                lifecycle: Lifecycle(onAppear: addMoreItemsForTesting)
             )
-        }
+        )
     }
 }
-#endif
