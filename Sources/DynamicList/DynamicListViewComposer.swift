@@ -34,7 +34,6 @@ public class DynamicListViewComposer {
      - Returns: The Dynamic List View.
      */
     public static func compose<Item>(
-        title: String,
         sections: [DynamicListSection<Item>] = [DynamicListSection(id: UUID(), header: EmptyView(), items: [])],
         loader: @escaping () -> AnyPublisher<[Item], Error>,
         topics: [Topic<Item>] = [],
@@ -48,7 +47,6 @@ public class DynamicListViewComposer {
         config: DynamicListConfig
     ) -> DynamicListView<Item> {
         DynamicListView<Item>(
-            title: title,
             listItemView: { item in
                 let detailItemView = detailItemView?(item)
                 return ListItemView<Item>(

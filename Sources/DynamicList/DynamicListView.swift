@@ -17,21 +17,18 @@ public struct DynamicListView<Item: Identifiable>: View {
         store.sections[section].items
     }
 
-    let title: String
     let listItemView: (Item) -> ListItemView<Item>
     let noItemsView: () -> any View
     let errorView: () -> any View
     let config: DynamicListConfig
 
     init(
-        title: String,
         listItemView: @escaping (Item) -> ListItemView<Item>,
         store: DynamicListViewStore<Item>,
         noItemsView: @escaping () -> any View,
         errorView: @escaping () -> any View,
         config: DynamicListConfig
     ) {
-        self.title = title
         self.listItemView = listItemView
         self.store = store
         self.noItemsView = noItemsView
@@ -88,7 +85,6 @@ public struct DynamicListView<Item: Identifiable>: View {
                 }
             }
         }
-        .navigationTitle(title)
         .toolbar(content: {
             ToolbarItem(placement: config.topics.toolbarPlacement) {
                 TopicSegmentedView(
@@ -130,7 +126,6 @@ public struct DynamicListView<Item: Identifiable>: View {
 #Preview {
     NavigationView {
         DynamicListViewComposer.compose(
-            title: "My fruit list",
             sections: [defaultPreviewSection],
             loader: testFruitsLoader,
             topics: filters,
@@ -176,5 +171,6 @@ public struct DynamicListView<Item: Identifiable>: View {
                 lifecycle: Lifecycle(onAppear: addMoreItemsForTesting)
             )
         )
+        .navigationTitle("My fruit list")
     }
 }
