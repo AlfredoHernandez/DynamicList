@@ -7,7 +7,7 @@ import Combine
 import SwiftUI
 
 public struct DynamicListView<Item: Identifiable>: View {
-    @ObservedObject var store: DynamicListViewStore<Item>
+    @State var store: DynamicListViewStore<Item>
 
     public var sections: Int {
         store.sections.count

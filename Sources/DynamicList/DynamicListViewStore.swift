@@ -6,28 +6,21 @@ import Combine
 import Foundation
 import SwiftUI
 
-public struct DynamicListSection<Item>: Identifiable {
-    public var id: UUID
-    let header: any View
-    let footer: any View
-    var items: [Item]
-
-    public init(id: UUID, header: any View = EmptyView(), footer: any View = EmptyView(), items: [Item]) {
-        self.id = id
-        self.header = header
-        self.footer = footer
-        self.items = items
+@Observable
+class DynamicListViewStore<Item> {
+    var sections: [DynamicListSection<Item>]
+    var topicSelected: String = ""
+    var isLoading = false
+    var showLoadingAlert = false
+    var query: String = "" {
+        didSet {
+            queryPublisher.send(query)
+        }
     }
-}
-
-class DynamicListViewStore<Item>: ObservableObject {
-    @Published var sections: [DynamicListSection<Item>]
-    @Published var topicSelected: String = ""
-    @Published var isLoading = false
-    @Published var showLoadingAlert = false
-    @Published var query: String = ""
-    @Published var displayingError = false
+    var displayingError = false
     private let testingMode: Bool
+    
+    private var queryPublisher: CurrentValueSubject<String, Never> = .init("")
 
     var error: Error?
     private var firstTime = true
@@ -57,7 +50,7 @@ class DynamicListViewStore<Item>: ObservableObject {
             topicSelected = firstTopic.name
         }
         
-        $query
+        queryPublisher
             .dropFirst()
             .debounceIfNotTesting(testingMode)
             .sink { [weak self] _ in
