@@ -1,5 +1,5 @@
 //
-//  Copyright © 2023 Jesús Alfredo Hernández Alarcón. All rights reserved.
+//  Copyright © 2025 Jesús Alfredo Hernández Alarcón. All rights reserved.
 //
 
 #if DEBUG
@@ -16,7 +16,7 @@ enum FruitColor: CaseIterable {
     case purple
 }
 
-struct Fruit: Identifiable {
+struct Fruit: Identifiable, Hashable {
     var id: UUID = .init()
     let name: String
     let symbol: String
@@ -59,7 +59,7 @@ func searchingByQuery(query: String, item: AnyIdentifiable) -> Bool {
     return query == "" ? true : fruit.name.range(of: query, options: [.diacriticInsensitive, .caseInsensitive]) != nil
 }
 
-struct Advertisment: Identifiable {
+struct Advertisment: Identifiable, Hashable {
     var id: UUID = .init()
     let text: String
 }

@@ -1,12 +1,12 @@
 //
-//  Copyright © 2023 Jesús Alfredo Hernández Alarcón. All rights reserved.
+//  Copyright © 2025 Jesús Alfredo Hernández Alarcón. All rights reserved.
 //
 
 import AlertToast
 import Combine
 import SwiftUI
 
-public struct DynamicListView<Item: Identifiable>: View {
+public struct DynamicListView<Item: Identifiable & Hashable>: View {
     @State var store: DynamicListViewStore<Item>
 
     public var sections: Int {
@@ -17,14 +17,14 @@ public struct DynamicListView<Item: Identifiable>: View {
         store.sections[section].items
     }
 
-    let listItemView: (Item) -> ListItemView<Item>
+    let listItemView: (Item) -> AnyView
     let noItemsView: () -> any View
     let errorView: () -> any View
     let config: DynamicListConfig
 
     init(
-        listItemView: @escaping (Item) -> ListItemView<Item>,
         store: DynamicListViewStore<Item>,
+        listItemView: @escaping (Item) -> AnyView,
         noItemsView: @escaping () -> any View,
         errorView: @escaping () -> any View,
         config: DynamicListConfig
@@ -117,14 +117,36 @@ public struct DynamicListView<Item: Identifiable>: View {
 
     private func scrollToTop(using proxy: ScrollViewProxy) {
         withAnimation {
-            let firstItemId = store.sections.first?.items.first?.id
-            proxy.scrollTo(firstItemId)
+            let firstItemID = store.sections.first?.items.first?.id
+            proxy.scrollTo(firstItemID)
         }
     }
 }
 
-#Preview {
-    NavigationView {
+#Preview("Simple list") {
+    NavigationStack {
+        DynamicListViewComposer.compose(
+            loader: testFruitsLoader,
+            itemFeedView: { item in
+                if let fruit = item.value as? Fruit {
+                    return NavigationLink(value: fruit) {
+                        FruitItemView(item: fruit)
+                    }
+                } else if let ad = item.value as? Advertisment {
+                    return AdvertisementView(text: ad.text)
+                }
+                return EmptyView()
+            }, config: DynamicListConfig()
+        )
+        .navigationDestination(for: Fruit.self, destination: { fruit in
+            DetailFruitItemView(item: fruit)
+        })
+        .navigationTitle("My fruit list")
+    }
+}
+
+#Preview("Complex List") {
+    NavigationStack {
         DynamicListViewComposer.compose(
             sections: [defaultPreviewSection],
             loader: testFruitsLoader,
@@ -133,28 +155,22 @@ public struct DynamicListView<Item: Identifiable>: View {
             generateRandomItemsForLoading: randomItemsGenerator,
             itemFeedView: { item in
                 if let fruit = item.value as? Fruit {
-                    return FruitItemView(item: fruit)
+                    return NavigationLink(value: fruit) {
+                        FruitItemView(item: fruit)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background {
+                        #if os(iOS)
+                        return RoundedRectangle(cornerSize: CGSize(width: 8, height: 8))
+                            .foregroundColor(Color(uiColor: UIColor.tertiarySystemBackground))
+                            .shadow(radius: 2, x: 0, y: 0)
+                        #elseif os(macOS)
+                        return RoundedRectangle(cornerSize: CGSize(width: 8, height: 8))
+                            .shadow(radius: 2, x: 0, y: 0)
+                        #endif
+                    }
                 } else if let ad = item.value as? Advertisment {
                     return AdvertisementView(text: ad.text)
-                }
-                return EmptyView()
-            },
-            detailItemView: { item in
-                if let fruit = item.value as? Fruit {
-                    return DetailFruitItemView(item: fruit)
-                }
-                return nil
-            },
-            itemBackground: {
-                if #available(iOS 15.0, *) {
-                    #if os(iOS)
-                    return RoundedRectangle(cornerSize: CGSize(width: 8, height: 8))
-                        .foregroundColor(Color(uiColor: UIColor.tertiarySystemBackground))
-                        .shadow(radius: 2, x: 0, y: 0)
-                    #elseif os(macOS)
-                    return RoundedRectangle(cornerSize: CGSize(width: 8, height: 8))
-                        .shadow(radius: 2, x: 0, y: 0)
-                    #endif
                 }
                 return EmptyView()
             },
@@ -171,6 +187,9 @@ public struct DynamicListView<Item: Identifiable>: View {
                 lifecycle: Lifecycle(onAppear: addMoreItemsForTesting)
             )
         )
+        .navigationDestination(for: Fruit.self, destination: { fruit in
+            DetailFruitItemView(item: fruit)
+        })
         .navigationTitle("My fruit list")
     }
 }

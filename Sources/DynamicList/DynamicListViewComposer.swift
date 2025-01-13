@@ -1,5 +1,5 @@
 //
-//  Copyright © 2023 Jesús Alfredo Hernández Alarcón. All rights reserved.
+//  Copyright © 2025 Jesús Alfredo Hernández Alarcón. All rights reserved.
 //
 
 import Combine
@@ -40,21 +40,11 @@ public class DynamicListViewComposer {
         searchingByQuery: ((String, Item) -> Bool)? = nil,
         generateRandomItemsForLoading: (() -> [Item])? = nil,
         itemFeedView: @escaping (Item) -> any View,
-        detailItemView: ((Item) -> (any View)?)? = nil,
-        itemBackground: @escaping () -> any View = { EmptyView() },
         noItemsView: @escaping () -> any View = { NoItemsView() },
         errorView: @escaping () -> any View = { LoadingErrorView() },
         config: DynamicListConfig
     ) -> DynamicListView<Item> {
         DynamicListView<Item>(
-            listItemView: { item in
-                let detailItemView = detailItemView?(item)
-                return ListItemView<Item>(
-                    itemFeedView: { itemFeedView(item) },
-                    detailItemView: detailItemView != nil ? { detailItemView! } : nil,
-                    itemBackground: itemBackground
-                )
-            },
             store: DynamicListViewStore<Item>(
                 sections: sections,
                 topics: topics,
@@ -62,6 +52,9 @@ public class DynamicListViewComposer {
                 generateRandomItemsForLoading: generateRandomItemsForLoading,
                 loader: loader
             ),
+            listItemView: { item in
+                AnyView(itemFeedView(item))
+            },
             noItemsView: noItemsView,
             errorView: errorView,
             config: config
