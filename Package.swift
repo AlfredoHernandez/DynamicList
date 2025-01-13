@@ -3,7 +3,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "DynamicList",
+    name: "swift-dynamic-list",
     defaultLocalization: "en",
     platforms: [
         .iOS(.v17),
