@@ -6,48 +6,57 @@ import Combine
 import Foundation
 
 #if DEBUG
-let fruitsLoader = CurrentValueSubject<[Fruit], Error>([
-    Fruit(name: "Sandía", symbol: "🍉", color: .red),
-    Fruit(name: "Pera", symbol: "🍐", color: .green),
-    Fruit(name: "Manzana", symbol: "🍎", color: .red),
-    Fruit(name: "Naranja", symbol: "🍊", color: .orange),
-    Fruit(name: "Plátano", symbol: "🍌", color: .yellow),
+let fruitsLoader = CurrentValueSubject<[[Fruit]], Error>([
+    [
+        Fruit(name: "Sandía", symbol: "🍉", color: .red),
+        Fruit(name: "Pera", symbol: "🍐", color: .green),
+    ],
+    [
+        Fruit(name: "Manzana", symbol: "🍎", color: .red),
+        Fruit(name: "Naranja", symbol: "🍊", color: .orange),
+        Fruit(name: "Plátano", symbol: "🍌", color: .yellow),
+    ],
 ])
 
 func addMoreItemsForTesting() {
     DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
         fruitsLoader.send([
-            Fruit(name: "Sandía", symbol: "🍉", color: .red),
-            Fruit(name: "Pera", symbol: "🍐", color: .green),
-            Fruit(name: "Manzana Roja", symbol: "🍎", color: .red),
-            Fruit(name: "Naranja", symbol: "🍊", color: .orange),
-            Fruit(name: "Plátano", symbol: "🍌", color: .yellow),
-            Fruit(name: "Uva", symbol: "🍇", color: .purple),
-            Fruit(name: "Manzana Verde", symbol: "🍏", color: .green),
+            [
+                Fruit(name: "Sandía", symbol: "🍉", color: .red),
+                Fruit(name: "Pera", symbol: "🍐", color: .green),
+                Fruit(name: "Manzana Roja", symbol: "🍎", color: .red),
+                Fruit(name: "Naranja", symbol: "🍊", color: .orange),
+            ],
+            [
+                Fruit(name: "Plátano", symbol: "🍌", color: .yellow),
+                Fruit(name: "Uva", symbol: "🍇", color: .purple),
+                Fruit(name: "Manzana Verde", symbol: "🍏", color: .green),
+            ],
         ])
     }
 
     DispatchQueue.main.asyncAfter(deadline: .now() + 6) {
         fruitsLoader.send([
-            Fruit(name: "Pera", symbol: "🍐", color: .green),
-            Fruit(name: "Manzana Roja", symbol: "🍎", color: .red),
-            Fruit(name: "Manzana Verde", symbol: "🍏", color: .green),
-            Fruit(name: "Sandía", symbol: "🍉", color: .red),
-            Fruit(name: "Naranja", symbol: "🍊", color: .orange),
-            Fruit(name: "Durazno", symbol: "🍑", color: .orange),
+            [
+                Fruit(name: "Pera", symbol: "🍐", color: .green),
+                Fruit(name: "Manzana Roja", symbol: "🍎", color: .red),
+                Fruit(name: "Manzana Verde", symbol: "🍏", color: .green),
+            ],
+            [
+                Fruit(name: "Sandía", symbol: "🍉", color: .red),
+                Fruit(name: "Naranja", symbol: "🍊", color: .orange),
+                Fruit(name: "Durazno", symbol: "🍑", color: .orange),
+            ],
         ])
     }
 }
 
-func testFruitsLoader() -> AnyPublisher<[AnyIdentifiable], Error> {
-    fruitsLoader.map { fruits in
-        fruits.map { AnyIdentifiable(id: $0.id, value: $0) }
+func testFruitsLoader() -> AnyPublisher<[[AnyIdentifiable]], Error> {
+    fruitsLoader.map { section in
+        section.map { fruits in
+            fruits.map { AnyIdentifiable(id: $0.id, value: $0) }
+        }
     }
-    .append([
-        AnyIdentifiable(id: "xD1", value: Advertisment(text: "Sample advertisement1")),
-        AnyIdentifiable(id: "xD2", value: Advertisment(text: "Sample advertisement2")),
-        AnyIdentifiable(id: "xD3", value: Advertisment(text: "Sample advertisement3")),
-    ])
     .subscribe(on: DispatchQueue.global(qos: .background))
     .receive(on: DispatchQueue.main)
     .delay(for: .seconds(1.0), scheduler: DispatchQueue.main)

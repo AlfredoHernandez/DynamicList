@@ -1,5 +1,5 @@
 //
-//  Copyright © 2023 Jesús Alfredo Hernández Alarcón. All rights reserved.
+//  Copyright © 2025 Jesús Alfredo Hernández Alarcón. All rights reserved.
 //
 
 import Combine
@@ -17,9 +17,10 @@ class DynamicListViewStore<Item> {
             queryPublisher.send(query)
         }
     }
+
     var displayingError = false
     private let testingMode: Bool
-    
+
     private var queryPublisher: CurrentValueSubject<String, Never> = .init("")
 
     var error: Error?
@@ -29,14 +30,14 @@ class DynamicListViewStore<Item> {
     let topics: [Topic<Item>]
     let searchingByQuery: ((String, Item) -> Bool)?
     private let generateRandomItemsForLoading: (() -> [Item])?
-    private let loader: () -> AnyPublisher<[Item], Error>
+    private let loader: () -> AnyPublisher<[[Item]], Error>
 
     init(
         sections: [DynamicListSection<Item>] = [DynamicListSection(id: UUID(), items: [])],
         topics: [Topic<Item>] = [],
         searchingByQuery: ((String, Item) -> Bool)? = nil,
         generateRandomItemsForLoading: (() -> [Item])? = nil,
-        loader: @escaping () -> AnyPublisher<[Item], Error>,
+        loader: @escaping () -> AnyPublisher<[[Item]], Error>,
         testingMode: Bool = false
     ) {
         self.sections = sections
@@ -49,7 +50,7 @@ class DynamicListViewStore<Item> {
         if let firstTopic = topics.first {
             topicSelected = firstTopic.name
         }
-        
+
         queryPublisher
             .dropFirst()
             .debounceIfNotTesting(testingMode)
@@ -72,7 +73,7 @@ class DynamicListViewStore<Item> {
             self?.updateUIWhileLoadingItems()
         }
         await withCheckedContinuation { continuation in
-            loadItems() {
+            loadItems {
                 if !finished {
                     finished = true
                     continuation.resume()
@@ -87,17 +88,20 @@ class DynamicListViewStore<Item> {
         showLoadingAlert = true
         displayingError = false
         error = nil
-        
+
         displayingLoadingItems()
     }
-    
+
     private func loadItems(didFinishLoadingItems: (() -> Void)? = nil) {
         loader()
-            .tryMap(filteringItems)
-            .tryMap { [weak self] items in
-                guard let self, let searchingByQuery else { return items }
-                return items.filter { item in searchingByQuery(self.query, item) }
-            }
+            // TODO: Fix filtering items
+            // .tryMap(filteringItems)
+
+            // TODO: Fix search
+            // .tryMap { [weak self] items in
+            //    guard let self, let searchingByQuery else { return items }
+            //    return items.filter { item in searchingByQuery(self.query, item) }
+            // }
             .sink { [weak self] completion in
                 if case let .failure(error) = completion {
                     self?.insert([], at: 0)
@@ -107,8 +111,10 @@ class DynamicListViewStore<Item> {
                     self?.displayingError = true
                     didFinishLoadingItems?()
                 }
-            } receiveValue: { [weak self] (items: [Item]) in
-                self?.insert(items, at: 0)
+            } receiveValue: { [weak self] (sections: [[Item]]) in
+                for (index, items) in sections.enumerated() {
+                    self?.insert(items, at: index)
+                }
                 withAnimation(.default) {
                     self?.isLoading = false
                     self?.showLoadingAlert = false
@@ -124,7 +130,7 @@ class DynamicListViewStore<Item> {
     }
 
     private func filteringItems(_ items: [Item]) throws -> [Item] {
-        guard topics.count > 0, let index = topics.firstIndex(where: { $0.name == self.topicSelected }) else {
+        guard !topics.isEmpty, let index = topics.firstIndex(where: { $0.name == self.topicSelected }) else {
             return items
         }
         let predicate = topics[index].predicate

@@ -126,6 +126,7 @@ public struct DynamicListView<Item: Identifiable & Hashable>: View {
 #Preview("Simple list") {
     NavigationStack {
         DynamicListViewComposer.compose(
+            sections: DynamicListSection<AnyIdentifiable>.build(2),
             loader: testFruitsLoader,
             itemFeedView: { item in
                 if let fruit = item.value as? Fruit {
@@ -136,7 +137,9 @@ public struct DynamicListView<Item: Identifiable & Hashable>: View {
                     return AdvertisementView(text: ad.text)
                 }
                 return EmptyView()
-            }, config: DynamicListConfig()
+            }, config: DynamicListConfig(
+                list: ListConfig(style: .grouped)
+            )
         )
         .navigationDestination(for: Fruit.self, destination: { fruit in
             DetailFruitItemView(item: fruit)
@@ -148,7 +151,10 @@ public struct DynamicListView<Item: Identifiable & Hashable>: View {
 #Preview("Complex List") {
     NavigationStack {
         DynamicListViewComposer.compose(
-            sections: [defaultPreviewSection],
+            sections: [
+                firstItemsSection,
+                secondItemsSection,
+            ],
             loader: testFruitsLoader,
             topics: filters,
             searchingByQuery: searchingByQuery(query:item:),

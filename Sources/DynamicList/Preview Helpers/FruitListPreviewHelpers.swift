@@ -23,7 +23,7 @@ struct Fruit: Identifiable, Hashable {
     let color: FruitColor
 }
 
-let defaultPreviewSection = DynamicListSection<AnyIdentifiable>(
+let firstItemsSection = DynamicListSection<AnyIdentifiable>(
     id: UUID(),
     header: AdvertisementView(
         text: "You are using the free version, tap to unlock unlimited."
@@ -33,6 +33,12 @@ let defaultPreviewSection = DynamicListSection<AnyIdentifiable>(
             .font(.callout)
             .foregroundColor(.secondary)
     },
+    items: []
+)
+
+let secondItemsSection = DynamicListSection<AnyIdentifiable>(
+    id: UUID(),
+    header: Text("More fruits"),
     items: []
 )
 

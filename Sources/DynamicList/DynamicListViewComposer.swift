@@ -35,7 +35,7 @@ public class DynamicListViewComposer {
      */
     public static func compose<Item>(
         sections: [DynamicListSection<Item>] = [DynamicListSection(id: UUID(), header: EmptyView(), items: [])],
-        loader: @escaping () -> AnyPublisher<[Item], Error>,
+        loader: @escaping () -> AnyPublisher<[[Item]], Error>,
         topics: [Topic<Item>] = [],
         searchingByQuery: ((String, Item) -> Bool)? = nil,
         generateRandomItemsForLoading: (() -> [Item])? = nil,
