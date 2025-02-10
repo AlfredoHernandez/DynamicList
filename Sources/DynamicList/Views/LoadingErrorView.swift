@@ -1,5 +1,5 @@
 //
-//  Copyright © 2023 Jesús Alfredo Hernández Alarcón. All rights reserved.
+//  Copyright © 2025 Jesús Alfredo Hernández Alarcón. All rights reserved.
 //
 
 import SwiftUI
@@ -26,10 +26,8 @@ public struct LoadingErrorView: View {
     }
 }
 
-#if DEBUG
 struct LoadingErrorView_Previews: PreviewProvider {
     static var previews: some View {
         LoadingErrorView()
     }
 }
-#endif

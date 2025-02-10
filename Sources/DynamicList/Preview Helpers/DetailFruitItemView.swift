@@ -1,8 +1,6 @@
 //
-//  Copyright © 2023 Jesús Alfredo Hernández Alarcón. All rights reserved.
+//  Copyright © 2025 Jesús Alfredo Hernández Alarcón. All rights reserved.
 //
-
-#if DEBUG
 
 import SwiftUI
 
@@ -33,5 +31,3 @@ struct DetailFruitItemView_Previews: PreviewProvider {
             .previewLayout(.fixed(width: 340, height: 60))
     }
 }
-
-#endif

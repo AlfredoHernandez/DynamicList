@@ -1,8 +1,6 @@
 //
-//  Copyright © 2023 Jesús Alfredo Hernández Alarcón. All rights reserved.
+//  Copyright © 2025 Jesús Alfredo Hernández Alarcón. All rights reserved.
 //
-
-#if DEBUG
 
 import SwiftUI
 
@@ -35,5 +33,3 @@ struct AdvertisementView_Previews: PreviewProvider {
         )
     }
 }
-
-#endif

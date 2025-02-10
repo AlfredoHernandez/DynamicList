@@ -1,5 +1,5 @@
 //
-//  Copyright © 2023 Jesús Alfredo Hernández Alarcón. All rights reserved.
+//  Copyright © 2025 Jesús Alfredo Hernández Alarcón. All rights reserved.
 //
 
 import SwiftUI
@@ -21,7 +21,6 @@ struct TopicSegmentedView: View {
     }
 }
 
-#if DEBUG
 struct TopicSegmentedView_Previews: PreviewProvider {
     static var previews: some View {
         TopicSegmentedView(
@@ -30,4 +29,3 @@ struct TopicSegmentedView_Previews: PreviewProvider {
         )
     }
 }
-#endif

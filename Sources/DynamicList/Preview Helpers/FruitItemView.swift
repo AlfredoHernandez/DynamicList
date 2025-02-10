@@ -1,8 +1,6 @@
 //
-//  Copyright © 2023 Jesús Alfredo Hernández Alarcón. All rights reserved.
+//  Copyright © 2025 Jesús Alfredo Hernández Alarcón. All rights reserved.
 //
-
-#if DEBUG
 
 import SwiftUI
 
@@ -42,15 +40,15 @@ extension FruitColor {
     func toColor() -> Color {
         switch self {
         case FruitColor.green:
-            return Color.green
+            Color.green
         case FruitColor.orange:
-            return Color.orange
+            Color.orange
         case FruitColor.purple:
-            return Color.purple
+            Color.purple
         case FruitColor.red:
-            return Color.red
+            Color.red
         case FruitColor.yellow:
-            return Color.yellow
+            Color.yellow
         }
     }
 }
@@ -61,5 +59,3 @@ struct FruitItemView_Previews: PreviewProvider {
             .previewLayout(.fixed(width: 340, height: 60))
     }
 }
-
-#endif

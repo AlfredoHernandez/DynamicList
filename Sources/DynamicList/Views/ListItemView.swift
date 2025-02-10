@@ -23,7 +23,6 @@ struct ListItemView: View {
     }
 }
 
-#if DEBUG
 struct ListItemView_Previews: PreviewProvider {
     static let fruitA = Fruit(name: "Plátano", symbol: "🍌", color: .yellow)
     static let fruitB = Fruit(name: "Manzana", symbol: "🍎", color: .red)
@@ -49,4 +48,3 @@ struct ListItemView_Previews: PreviewProvider {
         }
     }
 }
-#endif

@@ -1,5 +1,5 @@
 //
-//  Copyright © 2023 Jesús Alfredo Hernández Alarcón. All rights reserved.
+//  Copyright © 2025 Jesús Alfredo Hernández Alarcón. All rights reserved.
 //
 
 import SwiftUI
@@ -42,10 +42,8 @@ struct FloatingActionButtonView: View {
     }
 }
 
-#if DEBUG
 struct FloatingActionButtonView_Previews: PreviewProvider {
     static var previews: some View {
         FloatingActionButtonView(action: {})
     }
 }
-#endif

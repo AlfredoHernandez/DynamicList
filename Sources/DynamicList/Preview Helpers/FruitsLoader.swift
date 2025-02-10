@@ -5,7 +5,6 @@
 import Combine
 import Foundation
 
-#if DEBUG
 let fruitsLoader = CurrentValueSubject<[[Fruit]], Error>([
     [
         Fruit(name: "Sandía", symbol: "🍉", color: .red),
@@ -62,4 +61,3 @@ func testFruitsLoader() -> AnyPublisher<[[AnyIdentifiable]], Error> {
     .delay(for: .seconds(1.0), scheduler: DispatchQueue.main)
     .eraseToAnyPublisher()
 }
-#endif

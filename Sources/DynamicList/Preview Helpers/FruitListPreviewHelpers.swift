@@ -2,8 +2,6 @@
 //  Copyright © 2025 Jesús Alfredo Hernández Alarcón. All rights reserved.
 //
 
-#if DEBUG
-
 import Combine
 import Foundation
 import SwiftUI
@@ -78,5 +76,3 @@ func randomItemsGenerator() -> [AnyIdentifiable] {
     }
     return fruits
 }
-
-#endif
